@@ -11,13 +11,19 @@ const T=document.getElementById("best");
 const O=document.getElementById("over");
 const F=document.getElementById("final");
 const X=document.getElementById("restart");
+const C = document.getElementById("coin");
+const L = document.getElementById("level");
 
-const GAME={
-score:0,
-best:+localStorage.getItem("block_best")||0,
-grid:[],
-cells:[],
-hand:[]
+const GAME = {
+    score: 0,
+    best: +localStorage.getItem("block_best") || 0,
+
+    coin: 0,
+    level: 1,
+
+    grid: [],
+    cells: [],
+    hand: []
 };
 T.textContent=GAME.best;
 
@@ -137,6 +143,7 @@ let OFFY = 0;
 let SIZE = 0;
 let HOLDER = null;
 let PREVIEW = [];
+let paused = false;
 
 function updateSize() {
     const cell = B.querySelector(".cell");
@@ -172,6 +179,7 @@ function boardPos(px, py) {
 }
 
 P.addEventListener("pointerdown", (e) => {
+    if (paused) return;
     const pieceEl = e.target.closest(".piece");
     if (!pieceEl) return;
     PICK = null;
@@ -206,6 +214,7 @@ pieceEl.classList.add("drag");
 });
 
 addEventListener("pointermove", (e) => {
+    if (paused) return;
     if (!PICK) return;
     const x = e.clientX - OFFX;
     const y = e.clientY - OFFY;
@@ -332,19 +341,30 @@ const addScore =
     .flat()
     .filter(Boolean)
     .length * 10;
-
 GAME.score += addScore;
 showScore(
     "+" + addScore,
     window.innerWidth / 2,
     window.innerHeight / 2
 );
-S.textContent=
-GAME.score;
-if(
-GAME.score>
-GAME.best
-){
+S.textContent=GAME.score;
+
+GAME.coin += addScore / 10;
+if (GAME.score >= GAME.level * 1000) {
+    GAME.level++;
+    showCombo(
+        "LEVEL UP!"
+    );
+    playSound(
+        1500,
+        0.4
+    );
+}
+C.textContent = GAME.coin;
+L.textContent = GAME.level;
+
+if(GAME.score>GAME.best)
+{
 GAME.best=
 GAME.score;
 T.textContent=
@@ -373,6 +393,7 @@ gameOver();
 }
 
 addEventListener("pointerup",e=>{
+if (paused) return;
 if(!PICK)return;
 let pos=
 boardPos(
@@ -574,16 +595,25 @@ return true;
 /*==========================
  BLOCK BLAST ENGINE
 ==========================*/
-X.onclick=()=>{
-GAME.score=0;
-S.textContent=0;
-O.classList.add("hide");
-GAME.grid=[];
-GAME.cells=[];
-GAME.hand=[];
-makeBoard();
-makePieces();
-drawBoard();
+X.onclick = () => {
+
+    GAME.score = 0;
+    GAME.coin = 0;
+    GAME.level = 1;
+
+    S.textContent = 0;
+    C.textContent = 0;
+    L.textContent = 1;
+
+    O.classList.add("hide");
+
+    GAME.grid = [];
+    GAME.cells = [];
+    GAME.hand = [];
+
+    makeBoard();
+    makePieces();
+    drawBoard();
 };
 
 /* SKOR TERTINGGI */
@@ -659,58 +689,177 @@ const audioCtx = new (
     window.webkitAudioContext
 )();
 
+let soundEnabled = true;
+
 function playSound(freq, duration){
+
+    if (!soundEnabled) return;
+
     const osc =
         audioCtx.createOscillator();
+
     const gain =
         audioCtx.createGain();
+
     osc.connect(gain);
+
     gain.connect(
         audioCtx.destination
     );
+
     osc.type = "square";
-    osc.frequency.value =
-        freq;
+
+    osc.frequency.value = freq;
+
     gain.gain.value = 0.08;
+
     osc.start();
+
     gain.gain.exponentialRampToValueAtTime(
         0.0001,
-        audioCtx.currentTime +
-        duration
+        audioCtx.currentTime + duration
     );
+
     osc.stop(
-        audioCtx.currentTime +
-        duration
+        audioCtx.currentTime + duration
     );
 }
 /*==========================
 BACKGROUND MUSIC
 ==========================*/
 const bgMusic = new Audio(
-    "music.mp3"
+    "CrayonSinchan.mp3"
 );
+
 bgMusic.loop = true;
 bgMusic.volume = 0.3;
-function startMusic() {
-    bgMusic.play().catch(() => {});
-}
-document.addEventListener(
-    "pointerdown",
-    startMusic,
-    { once: true }
-);
+
 const musicBtn =
     document.getElementById(
         "musicBtn"
     );
-musicBtn.onclick = () => {
-    if (bgMusic.paused) {
+
+musicBtn.onchange = function () {
+
+    bgMusic.pause();
+
+    bgMusic.src = this.value;
+
+    bgMusic.play();
+
+};
+let currentSong = 0;
+
+/* =====================
+   SETTINGS
+===================== */
+
+const settings =
+    document.getElementById(
+        "settings"
+    );
+
+const settingBtn =
+    document.getElementById(
+        "settingBtn"
+    );
+
+const closeSettings =
+    document.getElementById(
+        "closeSettings"
+    );
+
+settingBtn.onclick = () => {
+
+    settings.classList.remove(
+        "hide"
+    );
+};
+
+closeSettings.onclick = () => {
+
+    settings.classList.add(
+        "hide"
+    );
+};
+document.getElementById(
+    "toggleMusic"
+).onclick = function(){
+
+    if(bgMusic.paused){
+
         bgMusic.play();
-        musicBtn.textContent =
-            "🔊 Musik";
-    } else {
+
+        this.textContent = "ON";
+
+    }else{
+
         bgMusic.pause();
-        musicBtn.textContent =
-            "🔇 Musik";
+
+        this.textContent = "OFF";
     }
+};
+
+const themes = [
+
+["#172554", "#0f172a"],
+
+["#3b0764", "#111827"],
+
+["#064e3b", "#111827"]
+
+];
+
+let themeIndex = 0;
+
+document.getElementById(
+    "changeTheme"
+).onclick = function(){
+
+    themeIndex++;
+
+    themeIndex %= themes.length;
+
+    document.documentElement
+        .style
+        .setProperty(
+            "--bg2",
+            themes[themeIndex][0]
+        );
+
+    document.documentElement
+        .style
+        .setProperty(
+            "--bg1",
+            themes[themeIndex][1]
+        );
+};
+
+const pauseBtn = document.getElementById("pauseBtn");
+const pauseMenu = document.getElementById("pauseMenu");
+
+const resumeBtn = document.getElementById("resumeBtn");
+const restartPauseBtn = document.getElementById("restartPauseBtn");
+const homeBtn = document.getElementById("homeBtn");
+
+pauseBtn.onclick = () => {
+    paused = true;
+    pauseMenu.classList.remove("hide");
+};
+resumeBtn.onclick = () => {
+    paused = false;
+    pauseMenu.classList.add("hide");
+};
+restartPauseBtn.onclick = () => {
+    location.reload();
+};
+homeBtn.onclick = () => {
+
+    pauseMenu.classList.add("hide");
+
+    gameApp.classList.add("hide");
+
+    menu.classList.remove("hide");
+
+    paused = false;
 };
