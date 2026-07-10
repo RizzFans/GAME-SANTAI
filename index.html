@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Block Puzzle</title>
+<link rel="icon" href="data:,">
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -40,13 +41,10 @@
 
 <div class="app hide" id="gameApp">
 <header>
-    <div class="top-bar">
-    <button id="pauseBtn">
-        ⏸️
-    </button>
-    <button id="settingBtn">
-        ⚙️
-    </button>
+   <div class="top-bar">
+    <button id="pauseBtn">⏸️</button>
+    <button id="hintBtn">💡</button>
+    <button id="settingBtn">⚙️</button>
 </div>
 <h1>BLOCK PUZZLE</h1>
 
@@ -116,44 +114,52 @@ MAIN LAGI
     </div>
 </div>
 
+<div id="helpMenu" class="help-menu hide">
+    <div class="help-box">
+        <h2>📖 Cara Bermain</h2>
+        <ul>
+            <li>🧩 Seret balok ke papan.</li>
+            <li>📏 Penuhi satu baris atau kolom.</li>
+            <li>💥 Baris penuh akan hancur.</li>
+            <li>⭐ Dapatkan skor setinggi mungkin.</li>
+            <li>🎵 Pilih lagu favoritmu.</li>
+            <li>🏆 Pecahkan rekor terbaik.</li>
+        </ul>
+        <button id="closeHelp">
+            Tutup
+        </button>
+    </div>
+</div>
+
 <div id="settings" class="settings hide">
-
     <div class="settings-box">
-
         <h2>⚙️ Pengaturan</h2>
-
         <div class="setting-item">
             <span>Musik</span>
-
             <button id="toggleMusic">
                 ON
             </button>
         </div>
-
         <div class="setting-item">
             <span>Efek Suara</span>
-
             <button id="toggleSound">
                 ON
             </button>
         </div>
-
         <div class="setting-item">
             <span>Tema</span>
-
             <button id="changeTheme">
                 Biru
             </button>
         </div>
-
         <button id="closeSettings" class="close-btn">
             Tutup
         </button>
-
     </div>
-
 </div>
-<script src="script.js"></script>
 
+
+<div id="toast" class="toast"></div>
+<script src="script.js"></script>
 </body>
 </html>
