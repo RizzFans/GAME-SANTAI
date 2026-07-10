@@ -209,6 +209,7 @@ let SIZE = 0;
 let HOLDER = null;
 let PREVIEW = [];
 let paused = false;
+let comboStreak = 0;
 
 function updateSize() {
     const cell = B.querySelector(".cell");
@@ -546,10 +547,13 @@ async function clearLines() {
         }
         if (full) cols.push(x);
     }
-    if (
-        rows.length === 0 &&
-        cols.length === 0
-    ) return;
+   if (
+    rows.length === 0 &&
+    cols.length === 0
+) {
+    comboStreak = 0;
+    return;
+}
 
     const flash = [];
     rows.forEach(y => {
@@ -588,49 +592,37 @@ async function clearLines() {
     });
   const lines =
     rows.length + cols.length;
+    comboStreak++;
 let bonus = 0;
-if (lines === 1) {
+
+if (comboStreak === 1) {
     bonus = 100;
-    showCombo(
-        "Mantab!"
-    );
-
-    playSound(
-        700,
-        0.18
-    );
+    showCombo("🔥 MANTAB!");
+    playSound(700, 0.18);
 }
 
-else if (lines === 2) {
+else if (comboStreak === 2) {
     bonus = 300;
-    showCombo(
-        "COMBO x2"
-    );
-    playSound(
-        900,
-        0.22
-    );
+    showCombo("⚡ COMBO x2");
+    playSound(900, 0.22);
 }
 
-else if (lines === 3) {
+else if (comboStreak === 3) {
     bonus = 700;
-    showCombo(
-        "ANJAY!"
-    );
-    playSound(
-        1100,
-        0.28
-    );
+    showCombo("BUSET!");
+    playSound(1100, 0.28);
 }
-else {
+
+else if (comboStreak === 4) {
     bonus = 1500;
-    showCombo(
-        "GILE LU!"
-    );
-    playSound(
-        1300,
-        0.35
-    );
+    showCombo("GILE LU NDRO!");
+    playSound(1300, 0.35);
+}
+
+else {
+    bonus = 3000;
+    showCombo("MAKNYOOS!");
+    playSound(1600, 0.45);
 }
 GAME.score += bonus;
 S.textContent = GAME.score;
@@ -953,10 +945,10 @@ const themes = [
 
 {
     name: "Pink",
-    bg1: "#ff00bb",
+    bg1: "#f82ac1",
     bg2: "#ff60d5",
     panel: "#000000"
-}
+},
 
 ];
 
