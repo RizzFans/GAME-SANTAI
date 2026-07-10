@@ -17,25 +17,23 @@ const L = document.getElementById("level");
 const GAME = {
     score: 0,
     best: +localStorage.getItem("block_best") || 0,
-
     coin: 0,
-    level: 1,
-
+    level:1,
     grid: [],
     cells: [],
     hand: []
 };
+
 T.textContent=GAME.best;
 
-const COLORS=[
-"#39ff88",
-"#5ab4ff",
-"#ffd93d",
-"#ff6b6b",
-"#ae7cff",
-"#00d9ff",
-"#ff9f43"
+const COLORS = [
+    "#39ff88",
+    "#5ab4ff",
+    "#ffd93d",
+    "#ff6b6b",
+    "#ae7cff"
 ];
+
 
 const SHAPES=[
 [[1]],
@@ -375,8 +373,10 @@ if(GAME.score>GAME.best)
 {
 GAME.best=
 GAME.score;
-T.textContent=
-GAME.best;
+T.textContent=GAME.best;
+S.textContent = GAME.score;
+C.textContent = GAME.coin;
+L.textContent = GAME.level;
 localStorage.setItem(
 "block_best",
 GAME.best
@@ -604,20 +604,11 @@ return true;
  BLOCK BLAST ENGINE
 ==========================*/
 X.onclick = () => {
-
     GAME.score = 0;
-    GAME.coin = 0;
-    GAME.level = 1;
-
+    // GAME.coin = 0;
+    // GAME.level = 1;
     S.textContent = 0;
-    C.textContent = 0;
-    L.textContent = 1;
-
     O.classList.add("hide");
-
-    GAME.grid = [];
-    GAME.cells = [];
-    GAME.hand = [];
 
     makeBoard();
     makePieces();
@@ -688,6 +679,20 @@ function burst(x, y, color){
         }, 600);
     }
 }
+
+/*==========================
+TUTORIAL
+==========================*/
+const helpBtn = document.getElementById("helpBtn");
+const helpMenu = document.getElementById("helpMenu");
+const closeHelp = document.getElementById("closeHelp");
+helpBtn.onclick = () => {
+    helpMenu.classList.remove("hide");
+};
+
+closeHelp.onclick = () => {
+    helpMenu.classList.add("hide");
+};
 
 /*==========================
  SOUND
@@ -776,16 +781,13 @@ const closeSettings =
     document.getElementById(
         "closeSettings"
     );
-
 settingBtn.onclick = () => {
-
     settings.classList.remove(
         "hide"
     );
 };
 
 closeSettings.onclick = () => {
-
     settings.classList.add(
         "hide"
     );
@@ -793,54 +795,105 @@ closeSettings.onclick = () => {
 document.getElementById(
     "toggleMusic"
 ).onclick = function(){
-
     if(bgMusic.paused){
-
         bgMusic.play();
-
         this.textContent = "ON";
-
     }else{
-
         bgMusic.pause();
-
         this.textContent = "OFF";
     }
 };
 
+/* =====================
+   EFEK SUARA
+===================== */
+
+const soundBtn = document.getElementById(
+    "toggleSound"
+);
+soundBtn.onclick = function(){
+    soundEnabled = !soundEnabled;
+    this.textContent =
+        soundEnabled
+            ? "ON"
+            : "OFF";
+};
+
 const themes = [
 
-["#172554", "#0f172a"],
+{
+    name: "Biru",
+    bg1: "#0f172a",
+    bg2: "#172554",
+    panel: "#1e293b"
+},
 
-["#3b0764", "#111827"],
+{
+    name: "Ungu",
+    bg1: "#111827",
+    bg2: "#4c1d95",
+    panel: "#312e81"
+},
 
-["#064e3b", "#111827"]
+{
+    name: "Hijau",
+    bg1: "#111827",
+    bg2: "#064e3b",
+    panel: "#134e4a"
+},
+
+{
+    name: "Pink",
+    bg1: "#ff00bb",
+    bg2: "#ff60d5",
+    panel: "#000000"
+}
 
 ];
 
 let themeIndex = 0;
 
-document.getElementById(
-    "changeTheme"
-).onclick = function(){
+const themeBtn =
+    document.getElementById(
+        "changeTheme"
+    );
+
+themeBtn.onclick = () => {
 
     themeIndex++;
 
-    themeIndex %= themes.length;
+    if (
+        themeIndex >= themes.length
+    ) {
+        themeIndex = 0;
+    }
 
-    document.documentElement
-        .style
-        .setProperty(
-            "--bg2",
-            themes[themeIndex][0]
-        );
+    const t =
+        themes[themeIndex];
 
     document.documentElement
         .style
         .setProperty(
             "--bg1",
-            themes[themeIndex][1]
+            t.bg1
         );
+
+    document.documentElement
+        .style
+        .setProperty(
+            "--bg2",
+            t.bg2
+        );
+
+    document.documentElement
+        .style
+        .setProperty(
+            "--panel",
+            t.panel
+        );
+
+    themeBtn.textContent =
+        t.name;
 };
 
 const pauseBtn = document.getElementById("pauseBtn");
@@ -859,15 +912,171 @@ resumeBtn.onclick = () => {
     pauseMenu.classList.add("hide");
 };
 restartPauseBtn.onclick = () => {
-    location.reload();
-};
-homeBtn.onclick = () => {
-
+    GAME.score = 0;
+    S.textContent = 0;
+    O.classList.add("hide");
     pauseMenu.classList.add("hide");
-
-    gameApp.classList.add("hide");
-
-    menu.classList.remove("hide");
-
+    makeBoard();
+    makePieces();
+    drawBoard();
     paused = false;
 };
+homeBtn.onclick = () => {
+    pauseMenu.classList.add("hide");
+    gameApp.classList.add("hide");
+    menu.classList.remove("hide");
+    paused = false;
+};
+
+const hintBtn = document.getElementById("hintBtn");
+
+hintBtn.onclick = () => {
+    const COST = 200;
+    if (GAME.coin < COST) {
+        showToast(
+    " Butuh " + COST + " coin!",
+    "error"
+);
+        return;
+    }
+    let bestMove = null;
+    let bestScore = -1;
+    for (const piece of GAME.hand) {
+        for (let y = 0; y < G; y++) {
+            for (let x = 0; x < G; x++) {
+                if (
+                    !canPlace(
+                        piece,
+                        x,
+                        y
+                    )
+                ) {
+                    continue;
+                }
+                let score = 0;
+                piece.shape.forEach(
+                    row => {
+                        row.forEach(
+                            cell => {
+                                if (cell) {
+                                    score += 10;
+                                }
+                            }
+                        );
+                    }
+                );
+                let rowBonus = 0;
+                let colBonus = 0;
+
+                for (
+                    let yy = 0;
+                    yy < G;
+                    yy++
+                ) {
+
+                    let filled = 0;
+                    for (
+                        let xx = 0;
+                        xx < G;
+                        xx++
+                    ) {
+
+                        if (
+                            GAME.grid[yy][xx]
+                        ) {
+                            filled++;
+                        }
+                    }
+
+                    if (
+                        filled >= 6
+                    ) {
+                        rowBonus += 100;
+                    }
+                }
+
+                for (
+                    let xx = 0;
+                    xx < G;
+                    xx++
+                ) {
+                    let filled = 0;
+                    for (
+                        let yy = 0;
+                        yy < G;
+                        yy++
+                    ) {
+
+                        if (
+                            GAME.grid[yy][xx]
+                        ) {
+                            filled++;
+                        }
+                    }
+                    if (
+                        filled >= 6
+                    ) {
+                        colBonus += 100;
+                    }
+                }
+                score +=
+                    rowBonus +
+                    colBonus;
+                if (
+                    score >
+                    bestScore
+                ) {
+                    bestScore =
+                        score;
+                    bestMove = {
+                        piece,
+                        x,
+                        y
+
+                    };
+                }
+            }
+        }
+    }
+
+    if (!bestMove) {
+        showToast(
+    "❌ Tidak ada langkah!",
+    "error"
+);
+        return;
+    }
+    GAME.coin -= COST;
+    C.textContent =
+        GAME.coin;
+    showPreview(
+        bestMove.piece,
+        bestMove.x,
+        bestMove.y
+    );
+    showCombo(
+        "💡 SMART HINT"
+    );
+    showToast(
+    "💡 Hint aktif!",
+    "success"
+);
+    setTimeout(
+        clearPreview,
+        2500
+    );
+};
+
+const toast = document.getElementById("toast");
+function showToast(text, type = "") {
+    toast.textContent = text;
+    toast.className = "toast";
+    if (type) {
+        toast.classList.add(type);
+    }
+    toast.classList.add("show");
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2500);
+}
