@@ -656,7 +656,6 @@ return false;
 F.textContent=
 GAME.score;
 O.classList.remove("hide");
-bgMusic.pause();
 return true;
 }
 /*==========================
