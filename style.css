@@ -45,7 +45,11 @@ body{
 /* ======================
    BACKGROUND MENU
 ====================== */
-
+.menu::before,
+.menu::after,
+.bg-block{
+    pointer-events: none;
+}
 .menu{
     position: fixed;
     inset: 0;
@@ -133,6 +137,8 @@ body{
 }
 
 .menu-box{
+    position: relative;
+    z-index: 10;
     width:360px;
     background:#1e293b;
     padding:30px;
