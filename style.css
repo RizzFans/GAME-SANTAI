@@ -59,6 +59,18 @@ body{
     background: rgba(0,0,0,.8);
     z-index: 999999;
 }
+#closeHelp{
+    margin-top: 20px;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: #ff4d4d;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
 .help-box{
     width: min(90%, 340px);
     padding: 25px;
@@ -438,103 +450,80 @@ body{
    BACKGROUND MENU
 ====================== */
 
-.menu{
+#menu{
     position: fixed;
     inset: 0;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
-    pointer-events: auto;
+    gap: 16px;
+
     background:
-        radial-gradient(
-            circle at top,
-            #233f9b 0%,
-            #172554 40%,
-            #081127 100%
+        linear-gradient(
+            180deg,
+            var(--bg1),
+            var(--bg2)
         );
-    z-index: 999999;
+
+    z-index: 1000;
 }
 
-.menu::before{
-    content: "";
-    position: absolute;
-    width: 700px;
-    height: 700px;
-    border-radius: 50%;
-    background:
-        radial-gradient(
-            circle,
-            rgba(57,255,136,.18),
-            transparent 70%
-        );
-    top: -250px;
-    left: -250px;
-    filter: blur(80px);
-    animation: glow1 8s ease-in-out infinite;
+.logo{
+    font-size: 48px;
+    font-weight: bold;
+
+    margin-bottom: 30px;
+
+    text-shadow:
+        0 0 15px #39ff88,
+        0 0 35px #39ff88;
+
+    animation: glow 2s infinite;
 }
-.menu::after{
-    content: "";
-    position: absolute;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    background:
-        radial-gradient(
-            circle,
-            rgba(0,217,255,.15),
-            transparent 70%
-        );
-    bottom: -200px;
-    right: -200px;
-    filter: blur(80px);
-    animation: glow2 10s ease-in-out infinite;
-}
-@keyframes glow1{
+
+@keyframes glow{
+
     0%{
-        transform:
-            translate(0,0)
-            scale(1);
+        transform: scale(1);
     }
+
     50%{
-        transform:
-            translate(80px,40px)
-            scale(1.2);
+        transform: scale(1.05);
     }
+
     100%{
-        transform:
-            translate(0,0)
-            scale(1);
-    }
-}
-@keyframes glow2{
-    0%{
-        transform:
-            translate(0,0)
-            scale(1);
-    }
-    50%{
-        transform:
-            translate(-60px,-30px)
-            scale(1.15);
-    }
-    100%{
-        transform:
-            translate(0,0)
-            scale(1);
+        transform: scale(1);
     }
 }
 
-.menu-box{
-    position:relative; 
-    z-index:100000;
-    width:360px;
-    background:#1e293b;
-    padding:30px;
-    border-radius:24px;
-    text-align:center;
-    box-shadow:
-        0 20px 60px rgba(0,0,0,.45);
+.best-score{
+    color: gold;
+    opacity: .8;
+    margin-bottom: 20px;
+}
+
+#menu button{
+    width: 260px;
+
+    padding: 16px;
+
+    border: none;
+    border-radius: 16px;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    background: #1e293b;
+    color: white;
+
+    transition: .2s;
+}
+
+#menu button:hover{
+    transform: scale(1.05);
 }
 /* ======================
    BALOK MELAYANG
@@ -593,12 +582,7 @@ body{
             translateY(0)
             rotate(0deg);
     }
-}
-
-.logo{
-    font-size:38px;
-    margin-bottom:12px;
-}
+}   
 
 .subtitle{
     opacity:.8;
@@ -848,7 +832,7 @@ h1{
 }
 
 .hide{
-    display:none;
+    display:none !important; 
 }
 
 .box{
