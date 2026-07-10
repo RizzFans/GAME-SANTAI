@@ -65,6 +65,7 @@ body{
             #081127 100%
         );
     z-index: 999999;
+    touch-action:auto;
 }
 
 .menu::before{
