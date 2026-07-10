@@ -655,9 +655,8 @@ return false;
 }
 F.textContent=
 GAME.score;
-O.classList.remove(
-"hide"
-);
+O.classList.remove("hide");
+bgMusic.pause();
 return true;
 }
 /*==========================
@@ -770,6 +769,9 @@ playBtn.onclick = () => {
     makeBoard();
     makePieces();
     drawBoard();
+    if (bgMusic.paused) {
+    bgMusic.play().catch(() => {});
+}
     menu.style.display = "none";
     gameApp.classList.remove("hide");
 };
@@ -781,6 +783,9 @@ continueBtn.onclick = () => {
         );
         return;
     }
+    if (bgMusic.paused) {
+    bgMusic.play().catch(() => {});
+}
     menu.style.display = "none";
     gameApp.classList.remove("hide");
 
