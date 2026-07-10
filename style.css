@@ -498,8 +498,8 @@ body{
 }
 
 .best-score{
+    font-size: 22px;
     color: gold;
-    opacity: .8;
     margin-bottom: 20px;
 }
 
@@ -642,6 +642,82 @@ h1{
 /*======================
  SCORE
 ======================*/
+.fly-score{
+    position:fixed;
+    font-size:24px;
+    font-weight:900;
+    color:#ffd93d;
+    text-shadow:
+        0 0 10px #000;
+    pointer-events:none;
+    animation:
+        flyScore .8s ease-out forwards;
+    z-index:10000;
+}
+@keyframes flyScore{
+    0%{
+        opacity:1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+    100%{
+        opacity:0;
+        transform:
+            translateY(-80px)
+            scale(1.4);
+    }
+}
+
+.combo{
+    position:fixed;
+    left:50%;
+    top:50%;
+    transform:
+        translate(-50%,-50%)
+        scale(.5);
+    font-size:56px;
+    font-weight:900;
+    color:#fff;
+    text-shadow:
+        0 0 15px #ffffff,
+        0 0 35px #ffd93d;
+    pointer-events:none;
+    opacity:0;
+    z-index:99999;
+}
+
+.combo.show{
+    animation:
+        comboPop .9s ease;
+}
+@keyframes comboPop{
+    0%{
+        opacity:0;
+        transform:
+            translate(-50%,-50%)
+            scale(.4);
+    }
+    20%{
+        opacity:1;
+        transform:
+            translate(-50%,-50%)
+            scale(1.25);
+    }
+    70%{
+        opacity:1;
+        transform:
+            translate(-50%,-50%)
+            scale(1);
+    }
+    100%{
+        opacity:0;
+        transform:
+            translate(-50%,-80%)
+            scale(1.4);
+    }
+}
+
 .score{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -684,13 +760,11 @@ h1{
     border-radius:20px;
     box-shadow:var(--shadow);
 }
-
 .block{
     width:24px;
     height:24px;
     border-radius:5px;
 }
-
 .cell{
     width:var(--size);
     height:var(--size);
@@ -733,31 +807,22 @@ h1{
     color: black;
 }
 .cell.preview{
-
     outline:4px solid #ffd93d;
 
     box-shadow:
         0 0 15px #ffd93d,
         0 0 30px #ffd93d;
-
     animation:
         hintPulse .7s infinite alternate;
 }
-
 @keyframes hintPulse{
-
     from{
-
         transform:
             scale(.92);
-
     }
-
     to{
-
         transform:
             scale(1.08);
-
     }
 }
 .cell.clear{
@@ -884,81 +949,7 @@ button:active{
 }
 
 
-.fly-score{
-    position:fixed;
-    font-size:24px;
-    font-weight:900;
-    color:#ffd93d;
-    text-shadow:
-        0 0 10px #000;
-    pointer-events:none;
-    animation:
-        flyScore .8s ease-out forwards;
-    z-index:10000;
-}
-@keyframes flyScore{
-    0%{
-        opacity:1;
-        transform:
-            translateY(0)
-            scale(1);
-    }
-    100%{
-        opacity:0;
-        transform:
-            translateY(-80px)
-            scale(1.4);
-    }
-}
 
-.combo{
-    position:fixed;
-    left:50%;
-    top:50%;
-    transform:
-        translate(-50%,-50%)
-        scale(.5);
-    font-size:56px;
-    font-weight:900;
-    color:#fff;
-    text-shadow:
-        0 0 15px #ffffff,
-        0 0 35px #ffd93d;
-    pointer-events:none;
-    opacity:0;
-    z-index:99999;
-}
-
-.combo.show{
-    animation:
-        comboPop .9s ease;
-}
-@keyframes comboPop{
-    0%{
-        opacity:0;
-        transform:
-            translate(-50%,-50%)
-            scale(.4);
-    }
-    20%{
-        opacity:1;
-        transform:
-            translate(-50%,-50%)
-            scale(1.25);
-    }
-    70%{
-        opacity:1;
-        transform:
-            translate(-50%,-50%)
-            scale(1);
-    }
-    100%{
-        opacity:0;
-        transform:
-            translate(-50%,-80%)
-            scale(1.4);
-    }
-}
 
 /*======================
  ANIMASI BALOK BARU
@@ -1011,8 +1002,9 @@ button:active{
             scale(0);
     }
 }
-
 #musicBtn{
+    background: rgb(48, 47, 47);
+    color: white;
     width:100%;
     padding:8px;
     margin:0 0 8px 0;
