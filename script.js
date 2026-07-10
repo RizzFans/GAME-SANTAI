@@ -78,13 +78,21 @@ const menuBest = document.getElementById("menuBest");
 
 menuBest.textContent = GAME.best;
 
-playBtn.onclick = () => {
+playBtn.addEventListener("click", () => {
 
-    menu.classList.add("hide");
+    menu.style.display = "none";
 
     gameApp.classList.remove("hide");
 
-};
+});
+
+playBtn.addEventListener("touchstart", () => {
+
+    menu.style.display = "none";
+
+    gameApp.classList.remove("hide");
+
+});
 
 function makePieces(){
 P.innerHTML="";
