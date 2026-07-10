@@ -24,6 +24,79 @@ const GAME = {
     hand: []
 };
 
+function saveGame() {
+    const saveData = {
+        score: GAME.score,
+        best: GAME.best,
+        coin: GAME.coin,
+        level: GAME.level,
+        grid: GAME.grid,
+        hand: GAME.hand.map(p => ({
+            shape: p.shape,
+            color: p.color
+        }))
+    };
+    localStorage.setItem(
+        "block_save",
+        JSON.stringify(saveData)
+    );
+}
+
+function loadGame() {
+    const data = JSON.parse(
+        localStorage.getItem("block_save")
+    );
+    if (!data) return false;
+    GAME.score = data.score;
+    GAME.best = data.best;
+    GAME.coin = data.coin;
+    GAME.level = data.level;
+    GAME.grid = data.grid;
+    S.textContent = GAME.score;
+    T.textContent = GAME.best;
+    C.textContent = GAME.coin;
+    L.textContent = GAME.level;
+
+    B.innerHTML = "";
+    GAME.cells = [];
+    for (let y = 0; y < G; y++) {
+        for (let x = 0; x < G; x++) {
+            const cell = document.createElement("div");
+            cell.className = "cell";
+            GAME.cells.push(cell);
+            B.appendChild(cell);
+        }
+    }
+    P.innerHTML = "";
+    GAME.hand = [];
+    data.hand.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "piece";
+        item.shape.forEach(r => {
+            const row = document.createElement("div");
+            row.className = "row";
+            r.forEach(v => {
+                const b = document.createElement("div");
+                b.className = "block";
+                if (v) {
+                    b.style.background = item.color;
+                } else {
+                    b.style.visibility = "hidden";
+                }
+                row.appendChild(b);
+            });
+            el.appendChild(row);
+        });
+        GAME.hand.push({
+            shape: item.shape,
+            color: item.color,
+            el
+        });
+        P.appendChild(el);
+    });
+    drawBoard();
+    return true;
+}
 T.textContent=GAME.best;
 
 const COLORS = [
@@ -76,21 +149,7 @@ const menuBest = document.getElementById("menuBest");
 
 menuBest.textContent = GAME.best;
 
-playBtn.addEventListener("click", () => {
 
-    menu.style.display = "none";
-
-    gameApp.classList.remove("hide");
-
-});
-
-playBtn.addEventListener("touchstart", () => {
-
-    menu.style.display = "none";
-
-    gameApp.classList.remove("hide");
-
-});
 
 function makePieces(){
 P.innerHTML="";
@@ -397,6 +456,7 @@ GAME.hand.length===0
 ){
 makePieces();
 }
+saveGame();
 gameOver();
 }
 
@@ -605,9 +665,13 @@ return true;
 ==========================*/
 X.onclick = () => {
     GAME.score = 0;
-    // GAME.coin = 0;
-    // GAME.level = 1;
-    S.textContent = 0;
+    GAME.coin = 0;
+    GAME.level = 1;
+
+    S.textContent = GAME.score;
+    C.textContent = GAME.coin;
+    L.textContent = GAME.level;
+
     O.classList.add("hide");
 
     makeBoard();
@@ -681,14 +745,56 @@ function burst(x, y, color){
 }
 
 /*==========================
-TUTORIAL
+MENU
 ==========================*/
-const helpBtn = document.getElementById("helpBtn");
-const helpMenu = document.getElementById("helpMenu");
-const closeHelp = document.getElementById("closeHelp");
-helpBtn.onclick = () => {
+const continueBtn =
+    document.getElementById(
+        "continueBtn"
+    );
+const tutorialBtn =
+    document.getElementById(
+        "tutorialBtn"
+    );
+playBtn.onclick = () => {
+    const yakin = confirm(
+        "Mulai game baru?"
+    );
+    if (!yakin) return;
+    GAME.score = 0;
+    GAME.coin = 0;
+    GAME.level = 1;
+    localStorage.removeItem("block_save");
+    S.textContent = GAME.score;
+    C.textContent = GAME.coin;
+    L.textContent = GAME.level;
+    makeBoard();
+    makePieces();
+    drawBoard();
+    menu.style.display = "none";
+    gameApp.classList.remove("hide");
+};
+continueBtn.onclick = () => {
+    if (!loadGame()) {
+        showToast(
+            "Belum ada save game!",
+            "error"
+        );
+        return;
+    }
+    menu.style.display = "none";
+    gameApp.classList.remove("hide");
+
+};
+tutorialBtn.onclick = () => {
     helpMenu.classList.remove("hide");
 };
+
+/*==========================
+TUTORIAL
+==========================*/
+const helpMenu = document.getElementById("helpMenu");
+
+const closeHelp = document.getElementById("closeHelp");
 
 closeHelp.onclick = () => {
     helpMenu.classList.add("hide");
@@ -820,7 +926,6 @@ soundBtn.onclick = function(){
 };
 
 const themes = [
-
 {
     name: "Biru",
     bg1: "#0f172a",
@@ -913,7 +1018,11 @@ resumeBtn.onclick = () => {
 };
 restartPauseBtn.onclick = () => {
     GAME.score = 0;
-    S.textContent = 0;
+    GAME.coin = 0;
+    GAME.level = 1;
+    S.textContent = GAME.score;
+    C.textContent = GAME.coin;
+    L.textContent = GAME.level;
     O.classList.add("hide");
     pauseMenu.classList.add("hide");
     makeBoard();
@@ -924,7 +1033,8 @@ restartPauseBtn.onclick = () => {
 homeBtn.onclick = () => {
     pauseMenu.classList.add("hide");
     gameApp.classList.add("hide");
-    menu.classList.remove("hide");
+    menu.style.display = "flex";
+    bgMusic.pause();
     paused = false;
 };
 
@@ -1039,13 +1149,15 @@ hintBtn.onclick = () => {
         }
     }
 
-    if (!bestMove) {
-        showToast(
-    "❌ Tidak ada langkah!",
-    "error"
-);
-        return;
-    }
+   if (!bestMove) {
+
+    showToast(
+        "Tidak ada langkah!",
+        "error"
+    );
+
+    return;
+}
     GAME.coin -= COST;
     C.textContent =
         GAME.coin;
@@ -1057,9 +1169,9 @@ hintBtn.onclick = () => {
     showCombo(
         "💡 SMART HINT"
     );
-    showToast(
-    "💡 Hint aktif!",
-    "success"
+   showToast(
+    "💡 Posisi terbaik ditemukan!",
+    "info"
 );
     setTimeout(
         clearPreview,
