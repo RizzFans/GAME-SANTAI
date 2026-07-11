@@ -168,22 +168,19 @@ r.forEach(v=>{
 let b=document.createElement("div");
 b.className="block";
 if (v) {
+b.style.background = `
+    linear-gradient(
+        135deg,
+        #ffffff33 0%,
+        ${color} 25%,
+        ${color} 85%
+    )
+`;
 
-    b.style.background = `
-        linear-gradient(
-            135deg,
-            #ffffff66 0%,
-            ${color} 20%,
-            ${color} 80%,
-            #00000055 100%
-        )
-    `;
-
-    b.style.boxShadow = `
-        inset 0 3px 8px rgba(255,255,255,.35),
-        inset 0 -6px 12px rgba(0,0,0,.35),
-        0 0 20px ${color}
-    `;
+b.style.boxShadow = `
+    inset 0 2px 5px rgba(255,255,255,.18),
+    inset 0 -4px 8px rgba(0,0,0,.25),
+`;
 }
 else b.style.visibility="hidden";
 row.appendChild(b);
@@ -207,19 +204,18 @@ function drawBoard(){
        const color = GAME.grid[y][x];
 if (color) {
     c.style.background = `
-        linear-gradient(
-            135deg,
-            #ffffff66 0%,
-            ${color} 20%,
-            ${color} 80%,
-            #00000055 100%
-        )
-    `;
-    c.style.boxShadow = `
-        inset 0 3px 8px rgba(255,255,255,.35),
-        inset 0 -6px 12px rgba(0,0,0,.35),
-        0 0 20px ${color}
-    `;
+    linear-gradient(
+        135deg,
+        #ffffff33 0%,
+        ${color} 25%,
+        ${color} 85%
+    )
+`;
+
+c.style.boxShadow = `
+    inset 0 2px 5px rgba(255,255,255,.18),
+    inset 0 -4px 8px rgba(0,0,0,.25),
+`;
 }else{
             c.style.background = "var(--cell)";
             c.style.boxShadow = "";
@@ -634,16 +630,84 @@ setTimeout(() => {
 }, 300);
 
 await new Promise(r => setTimeout(r, 180));
-    rows.forEach(y => {
-        for (let x = 0; x < G; x++) {
-            GAME.grid[y][x] = 0;
-        }
-    });
-    cols.forEach(x => {
-        for (let y = 0; y < G; y++) {
-            GAME.grid[y][x] = 0;
-        }
-    });
+
+const cellsToRemove = [];
+
+// Ambil semua balok baris
+rows.forEach(y => {
+    for (let x = 0; x < G; x++) {
+        cellsToRemove.push({
+            x,
+            y
+        });
+    }
+});
+
+// Ambil semua balok kolom
+cols.forEach(x => {
+    for (let y = 0; y < G; y++) {
+        cellsToRemove.push({
+            x,
+            y
+        });
+    }
+});
+
+// Hilangkan duplikat
+const unique = [];
+
+cellsToRemove.forEach(c => {
+    if (
+        !unique.some(
+            v => v.x === c.x &&
+                 v.y === c.y
+        )
+    ) {
+        unique.push(c);
+    }
+});
+
+// Animasi hilang satu per satu
+unique.forEach((pos, index) => {
+    const cell =
+        GAME.cells[
+            pos.y * G + pos.x
+        ];
+    setTimeout(() => {
+
+    const cell =
+        GAME.cells[
+            pos.y * G + pos.x
+        ];
+
+    cell.classList.add(
+        "explode"
+    );
+
+    setTimeout(() => {
+
+        GAME.grid[
+            pos.y
+        ][
+            pos.x
+        ] = 0;
+
+        drawBoard();
+
+        cell.classList.remove(
+            "explode"
+        );
+
+    }, 300);
+
+}, index * 50);
+});
+await new Promise(
+    r => setTimeout(
+        r,
+        unique.length * 50 + 350
+    )
+);
     flash.forEach(cell => {
         cell.classList.remove("clear");
     });
@@ -682,7 +746,13 @@ else {
     showCombo("MAKNYOOS!");
     playSound(1600, 0.45);
 }
-GAME.score += bonus + (lines * 50);
+const totalBonus = bonus + (lines * 50);
+GAME.score += totalBonus;
+showScore(
+    "+" + totalBonus,
+    window.innerWidth / 2,
+    window.innerHeight / 2
+);
 S.textContent = GAME.score;
 saveGame();
 drawBoard();
