@@ -880,7 +880,7 @@ h1{
 
 .row{
     display:flex;
-    gap:4px;
+    gap:8px;
     justify-content:center;
 }
 
@@ -948,7 +948,18 @@ button:active{
 
 }
 
+@media (max-width: 600px){
 
+    .board{
+        --size: 42px;
+    }
+
+    .piece .block{
+        width: 36px;
+        height: 36px;
+    }
+
+}
 
 
 /*======================
