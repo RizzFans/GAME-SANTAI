@@ -597,7 +597,7 @@ let bonus = 0;
 
 if (comboStreak === 1) {
     bonus = 100;
-    showCombo("🔥 MANTAB!");
+    showCombo("MANTAB!");
     playSound(700, 0.18);
 }
 
