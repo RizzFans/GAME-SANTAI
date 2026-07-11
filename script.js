@@ -167,7 +167,24 @@ row.className="row";
 r.forEach(v=>{
 let b=document.createElement("div");
 b.className="block";
-if(v)b.style.background=color;
+if (v) {
+
+    b.style.background = `
+        linear-gradient(
+            135deg,
+            #ffffff66 0%,
+            ${color} 20%,
+            ${color} 80%,
+            #00000055 100%
+        )
+    `;
+
+    b.style.boxShadow = `
+        inset 0 3px 8px rgba(255,255,255,.35),
+        inset 0 -6px 12px rgba(0,0,0,.35),
+        0 0 20px ${color}
+    `;
+}
 else b.style.visibility="hidden";
 row.appendChild(b);
 });
@@ -185,11 +202,30 @@ P.appendChild(el);
 
 function drawBoard(){
     GAME.cells.forEach((c,i)=>{
-        let x=i%G;
-        let y=i/G|0;
-        c.style.background =
-            GAME.grid[y][x] || "var(--cell)";
+        let x = i % G;
+        let y = (i / G) | 0;
+       const color = GAME.grid[y][x];
+if (color) {
+    c.style.background = `
+        linear-gradient(
+            135deg,
+            #ffffff66 0%,
+            ${color} 20%,
+            ${color} 80%,
+            #00000055 100%
+        )
+    `;
+    c.style.boxShadow = `
+        inset 0 3px 8px rgba(255,255,255,.35),
+        inset 0 -6px 12px rgba(0,0,0,.35),
+        0 0 20px ${color}
+    `;
+}else{
+            c.style.background = "var(--cell)";
+            c.style.boxShadow = "";
+        }
     });
+
 }
 
 makeBoard();
@@ -210,6 +246,7 @@ let HOLDER = null;
 let PREVIEW = [];
 let paused = false;
 let comboStreak = 0;
+let comboTimeout = 0;
 
 function updateSize() {
     const cell = B.querySelector(".cell");
@@ -383,24 +420,49 @@ return true;
 }
 
 async function placePiece(p, x, y) {
+
 for(let r=0;r<p.shape.length;r++)
 for(let c=0;c<p.shape[r].length;c++){
-if(!p.shape[r][c])continue;
-GAME.grid[y+r][x+c] =
-    p.color;
-const cell =
-    GAME.cells[
-        (y + r) * G + (x + c)
-    ];
-const rect =
-    cell.getBoundingClientRect();
-burst(
+    if(!p.shape[r][c]) continue;
+    GAME.grid[y+r][x+c] = p.color;
+    const cell =
+        GAME.cells[(y+r)*G+c+x];
+    cell.classList.remove(
+        "place-effect"
+    );
+    void cell.offsetWidth;
+    cell.classList.add(
+        "place-effect"
+    );
+    cell.style.background = p.color;
+    const rect =
+        cell.getBoundingClientRect();
+
+    burst(
+        rect.left + rect.width / 2,
+        rect.top + rect.height / 2,
+        p.color
+    );
+    setTimeout(() => {
+        cell.classList.remove(
+            "place-effect"
+        );
+    }, 500);
+
+const wave = document.createElement("div");
+wave.className = "place-wave";
+wave.style.left =
     rect.left +
-    rect.width / 2,
+    rect.width / 2 + "px";
+wave.style.top =
     rect.top +
-    rect.height / 2,
-    p.color
-);
+    rect.height / 2 + "px";
+wave.style.borderColor =
+    p.color;
+document.body.appendChild(wave);
+setTimeout(() => {
+    wave.remove();
+}, 600);
 }
 const addScore =
     p.shape
@@ -414,7 +476,6 @@ showScore(
     window.innerHeight / 2
 );
 S.textContent=GAME.score;
-
 GAME.coin += addScore / 10;
 if (GAME.score >= GAME.level * 1000) {
     GAME.level++;
@@ -428,7 +489,6 @@ if (GAME.score >= GAME.level * 1000) {
 }
 C.textContent = GAME.coin;
 L.textContent = GAME.level;
-
 if(GAME.score>GAME.best)
 {
 GAME.best=
@@ -448,9 +508,6 @@ GAME.hand.filter(
 v=>v!==p
 );
 drawBoard();
-
-
-
 await clearLines();
 if(
 GAME.hand.length===0
@@ -523,7 +580,6 @@ function showCombo(text){
 async function clearLines() {
     let rows = [];
     let cols = [];
-
     // cek baris
     for (let y = 0; y < G; y++) {
         let full = true;
@@ -535,7 +591,6 @@ async function clearLines() {
         }
         if (full) rows.push(y);
     }
-
     // cek kolom
     for (let x = 0; x < G; x++) {
         let full = true;
@@ -551,10 +606,8 @@ async function clearLines() {
     rows.length === 0 &&
     cols.length === 0
 ) {
-    comboStreak = 0;
     return;
 }
-
     const flash = [];
     rows.forEach(y => {
         for (let x = 0; x < G; x++) {
@@ -563,7 +616,6 @@ async function clearLines() {
             );
         }
     });
-
     cols.forEach(x => {
         for (let y = 0; y < G; y++) {
             flash.push(
@@ -571,12 +623,17 @@ async function clearLines() {
             );
         }
     });
+   flash.forEach(cell => {
+    cell.classList.add("clear");
+});
 
-    flash.forEach(cell => {
-        cell.classList.add("clear");
-    });
+const app = document.getElementById("gameApp");
+app.classList.add("shake");
+setTimeout(() => {
+    app.classList.remove("shake");
+}, 300);
 
-    await new Promise(r => setTimeout(r, 180));
+await new Promise(r => setTimeout(r, 180));
     rows.forEach(y => {
         for (let x = 0; x < G; x++) {
             GAME.grid[y][x] = 0;
@@ -592,40 +649,42 @@ async function clearLines() {
     });
   const lines =
     rows.length + cols.length;
+    const now = Date.now();
+if (now - comboTimeout < 10000) {
     comboStreak++;
+} else {
+    comboStreak = 1;
+}
+comboTimeout = now;
 let bonus = 0;
-
 if (comboStreak === 1) {
     bonus = 100;
     showCombo("MANTAB!");
     playSound(700, 0.18);
 }
-
 else if (comboStreak === 2) {
     bonus = 300;
     showCombo("⚡ COMBO x2");
     playSound(900, 0.22);
 }
-
 else if (comboStreak === 3) {
     bonus = 700;
     showCombo("BUSET!");
     playSound(1100, 0.28);
 }
-
 else if (comboStreak === 4) {
     bonus = 1500;
     showCombo("GILE LU NDRO!");
     playSound(1300, 0.35);
 }
-
 else {
     bonus = 3000;
     showCombo("MAKNYOOS!");
     playSound(1600, 0.45);
 }
-GAME.score += bonus;
+GAME.score += bonus + (lines * 50);
 S.textContent = GAME.score;
+saveGame();
 drawBoard();
 }
 
@@ -657,13 +716,12 @@ X.onclick = () => {
     GAME.score = 0;
     GAME.coin = 0;
     GAME.level = 1;
-
+    comboStreak = 0;
+    localStorage.removeItem("block_save");
     S.textContent = GAME.score;
     C.textContent = GAME.coin;
     L.textContent = GAME.level;
-
     O.classList.add("hide");
-
     makeBoard();
     makePieces();
     drawBoard();
@@ -1016,9 +1074,11 @@ restartPauseBtn.onclick = () => {
     GAME.score = 0;
     GAME.coin = 0;
     GAME.level = 1;
+    comboStreak = 0;
+    localStorage.removeItem("block_save");
     S.textContent = GAME.score;
     C.textContent = GAME.coin;
-    L.textContent = GAME.level;
+    L.textContent = GAME.level
     O.classList.add("hide");
     pauseMenu.classList.add("hide");
     makeBoard();
