@@ -670,51 +670,61 @@ h1{
 }
 
 .combo{
-    position:fixed;
-    left:50%;
-    top:50%;
-    transform:
-        translate(-50%,-50%)
-        scale(.5);
-    font-size:56px;
-    font-weight:900;
-    color:#fff;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(.5);
+    font-size: 32px;
+    font-weight: 900;
+    color: #fff;
     text-shadow:
         0 0 15px #ffffff,
         0 0 35px #ffd93d;
-    pointer-events:none;
-    opacity:0;
-    z-index:99999;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 99999;
+    white-space: nowrap;
+    text-align: center;
+    max-width: 90vw;
+    z-index: 100000000;
 }
-
-.combo.show{
+.combo.show {
     animation:
-        comboPop .9s ease;
+        comboPop .9s ease,
+        rainbow .9s linear;
 }
-@keyframes comboPop{
-    0%{
-        opacity:0;
-        transform:
-            translate(-50%,-50%)
-            scale(.4);
+@keyframes rainbow {
+    0% {
+        filter: hue-rotate(0deg);
     }
-    20%{
-        opacity:1;
+    100% {
+        filter: hue-rotate(360deg);
+    }
+}
+@keyframes comboPop {
+    0%{
+        opacity: 0;
         transform:
-            translate(-50%,-50%)
-            scale(1.25);
+            translate(-50%, -50%)
+            scale(.3);
+    }
+    30%{
+        opacity: 1;
+        transform:
+            translate(-50%, -50%)
+            scale(1.4);
     }
     70%{
-        opacity:1;
+        opacity: 1;
         transform:
-            translate(-50%,-50%)
+            translate(-50%, -50%)
             scale(1);
     }
     100%{
-        opacity:0;
+        opacity: 0;
         transform:
-            translate(-50%,-80%)
-            scale(1.4);
+            translate(-50%, -120%)
+            scale(.8);
     }
 }
 
@@ -763,14 +773,64 @@ h1{
 .block{
     width:24px;
     height:24px;
-    border-radius:5px;
+    border-radius:14px;
+    position:relative;
+   border: 2px solid rgba(255,255,255,.08);
+    box-shadow:
+        inset 0 4px 10px rgba(255,255,255,.18),
+        inset 0 -6px 12px rgba(0,0,0,.35),
+        0 4px 12px rgba(0,0,0,.35);
+    overflow: hidden;
+    transition:
+        transform .2s,
+        box-shadow .2s;
+}
+.block::before{
+    content:"";
+    position:absolute;
+    top:3px;
+    left:3px;
+    right:3px;
+    height:35%;
+    border-radius:6px;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(
+                255,
+                255,
+                255,
+                .55
+            ),
+            transparent
+        );
+}
+
+.block::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:8px;
+    box-shadow:
+        0 0 10px rgba(
+            255,
+            255,
+            255,
+            .2
+        );
+    opacity:.7;
 }
 .cell{
     width:var(--size);
     height:var(--size);
     background:var(--cell);
-    border-radius:7px;
-    transition:.15s;
+    border-radius:17px;
+    border: 2px solid rgba(255,255,255,.08);
+    box-shadow:
+        inset 0 4px 10px rgba(255,255,255,.18),
+        inset 0 -6px 12px rgba(0,0,0,.35),
+        0 4px 12px rgba(0,0,0,.35);
+    transition:transform .2s, box-shadow .2s;
 }
 .toast{
     position: fixed;
@@ -876,11 +936,31 @@ h1{
     pointer-events:none;
     cursor:grabbing;
     transform:scale(1.08);
+    filter:
+    drop-shadow(
+        0 0 12px rgba(
+            255,
+            255,
+            255,
+            .6
+        )
+    )
+    drop-shadow(
+        0 0 25px rgba(
+            255,
+            255,
+            255,
+            .3
+        )
+    );
+transform:
+    scale(1.12)
+    rotate(-3deg);
 }
 
 .row{
     display:flex;
-    gap:6px;
+    gap:8px;
     justify-content:center;
 }
 
@@ -949,38 +1029,188 @@ button:active{
 }
 
 @media (max-width: 600px){
-
     .board{
         --size: 42px;
     }
-
     .piece .block{
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
+    }
+    .combo{
+        font-size: 24px;
     }
 
 }
 
 
 /*======================
+ ANIMASI HAPUS BARIS
+======================*/
+.app.shake {
+    animation: shakeBoard .3s ease;
+}
+@keyframes shakeBoard {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); }
+    75% { transform: translateX(-4px); }
+    100% { transform: translateX(0); }
+}
+/* ======================
+   ANIMASI BALOK EPIC
+====================== */
+@keyframes popBlock {
+    0% {
+        transform:
+            scale(0.2)
+            rotate(-15deg);
+        filter:
+            brightness(2)
+            blur(4px);
+    }
+    40% {
+        transform:
+            scale(1.3)
+            rotate(8deg);
+        filter:
+            brightness(1.8);
+    }
+    70% {
+        transform:
+            scale(.9)
+            rotate(-4deg);
+    }
+    100% {
+        transform:
+            scale(1)
+            rotate(0deg);
+        filter:
+            brightness(1);
+    }
+}
+.cell.pop {
+    animation:
+        placeBlock .45s cubic-bezier(
+            .17,
+            .89,
+            .32,
+            1.49
+        );
+    z-index: 10;
+}
+@keyframes placeBlock {
+    0% {
+        transform:
+            scale(0.2)
+            translateY(-25px)
+            rotate(-10deg);
+        filter:
+            brightness(2)
+            blur(3px);
+    }
+    40% {
+        transform:
+            scale(1.25)
+            translateY(4px)
+            rotate(5deg);
+        filter:
+            brightness(1.8);
+    }
+    70% {
+        transform:
+            scale(.92)
+            translateY(-2px);
+    }
+    100% {
+        transform:
+            scale(1)
+            translateY(0)
+            rotate(0deg);
+        filter:
+            brightness(1);
+    }
+}
+@keyframes placeEffect {
+    0%{
+        transform: scale(0.3) rotate(-15deg);
+        filter: brightness(3);
+        box-shadow:
+            0 0 0px transparent;
+    }
+    40%{
+        transform: scale(1.25) rotate(5deg);
+        filter: brightness(2);
+        box-shadow:
+            0 0 25px currentColor,
+            0 0 50px currentColor;
+    }
+    70%{
+        transform: scale(0.9);
+    }
+    100%{
+        transform: scale(1);
+        filter: brightness(1);
+        box-shadow:
+            inset 0 2px 8px rgba(255,255,255,.4),
+            0 0 12px rgba(255,255,255,.2);
+    }
+}
+.place-effect{
+    animation:
+        placeEffect .45s
+        cubic-bezier(
+            .18,
+            1.2,
+            .35,
+            1
+        );
+}
+.place-wave {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    border: 4px solid white;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99999;
+    animation:
+        placeWave .6s ease-out forwards;
+}
+@keyframes placeWave {
+    from {
+        opacity: .8;
+        transform:
+            translate(-50%, -50%)
+            scale(.2);
+    }
+    to {
+        opacity: 0;
+        transform:
+            translate(-50%, -50%)
+            scale(6);
+    }
+}
+/*======================
  ANIMASI BALOK BARU
 ======================*/
-.piece.spawn {
-    animation: spawnPiece .35s ease-out;
-}
-@keyframes spawnPiece {
+@keyframes dropPiece {
     from {
         opacity: 0;
         transform:
-            translateY(50px)
-            scale(.8);
+            translateY(-60px)
+            scale(.7);
     }
+
     to {
         opacity: 1;
         transform:
             translateY(0)
             scale(1);
     }
+}
+
+.piece.spawn {
+    animation: dropPiece .35s ease-out;
 }
 
 /*======================
