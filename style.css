@@ -39,7 +39,6 @@ body{
     align-items:center;
     flex-direction:column;
     padding:8px;
-    overflow:hidden;
 }
 
 
@@ -341,7 +340,7 @@ body{
 
     background:rgba(0,0,0,.75);
 
-    backdrop-filter:blur(10px);
+    background:rgba(0,0,0,.8);
 
     z-index:999999;
 }
@@ -758,7 +757,7 @@ h1{
  BOARD
 ======================*/
 .board{
-    --size: 44px;
+    --size: min(44px, calc((100vw - 40px) / 8));
     display:grid;
     grid-template-columns:repeat(8,var(--size));
     grid-template-rows:repeat(8,var(--size));
@@ -903,7 +902,68 @@ h1{
         filter:brightness(2);
     }
 }
+.mission-panel{
+    position: fixed;
+    inset: 0;
 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0,0,0,.7);
+
+    backdrop-filter: blur(8px);
+
+    z-index: 999999;
+}
+
+.mission-box{
+    width: min(90%, 260px);
+
+    background: #1e293b;
+
+    border-radius: 18px;
+
+    padding: 18px;
+}
+
+.mission-box h3{
+    text-align: center;
+    margin-bottom: 12px;
+    font-size: 18px;
+}
+
+.mission{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 10px;
+
+    margin-bottom: 8px;
+
+    background: #243449;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+}
+
+.mission.done{
+    background: #39ff88;
+    color: black;
+    font-weight: bold;
+}
+
+#closeMission{
+    margin-top: 10px;
+    background: #ff5252;
+    color: white;
+}
+
+.hide{
+    display: none !important;
+}
 
 /*======================
  PIECES
@@ -1021,11 +1081,9 @@ button:active{
     .board{
         --size: 32px;
     }
-
     .app{
         max-width: 480px;
     }
-
 }
 
 @media (max-width: 600px){
@@ -1039,8 +1097,8 @@ button:active{
     .combo{
         font-size: 24px;
     }
-
 }
+
 
 
 /*======================
