@@ -13,16 +13,85 @@ const F=document.getElementById("final");
 const X=document.getElementById("restart");
 const C = document.getElementById("coin");
 const L = document.getElementById("level");
+const missionBtn =
+    document.getElementById("missionBtn");
 
+const missionPanel =
+    document.getElementById("missionPanel");
+
+const closeMission =
+    document.getElementById("closeMission");
+
+missionBtn.onclick = () => {
+
+    missionPanel.classList.remove("hide");
+
+};
+
+closeMission.onclick = () => {
+
+    missionPanel.classList.add("hide");
+
+};
 const GAME = {
     score: 0,
     best: +localStorage.getItem("block_best") || 0,
     coin: 0,
-    level:1,
+    level: 1,
     grid: [],
     cells: [],
     hand: []
 };
+function updateUI() {
+    document.getElementById("score").textContent = GAME.score;
+    document.getElementById("best").textContent = GAME.best;
+    document.getElementById("coin").textContent = GAME.coin;
+    document.getElementById("level").textContent = GAME.level;
+}
+const MISSIONS = {
+    play: 0,
+    lines: 0,
+    scoreTarget: 2000,
+    rewardLineClaimed: false,
+    rewardScoreClaimed: false
+};
+
+function updateMissionUI() {
+    const m1 = document.getElementById("mission1");
+    const m2 = document.getElementById("mission2");
+    const m3 = document.getElementById("mission3");
+    m1.textContent = `${MISSIONS.play}/1`;
+    m2.textContent = `${Math.min(MISSIONS.lines, 5)} / 5`;
+    m3.textContent = `${GAME.score}/2000`;
+    // Misi: main 1 kali
+    if (MISSIONS.play >= 1) {
+        m1.parentElement.classList.add("done");
+    }
+    // Misi: hapus 5 baris
+    if (MISSIONS.lines >= 5) {
+        m2.parentElement.classList.add("done");
+        if (!MISSIONS.rewardLineClaimed) {
+            MISSIONS.rewardLineClaimed = true;
+            GAME.coin += 100;
+            alert(
+                "🎉 Misi selesai!\n+100 coin"
+            );
+            updateUI();
+        }
+    }
+    // Misi: skor 2000
+    if (GAME.score >= 2000) {
+        m3.parentElement.classList.add("done");
+        if (!MISSIONS.rewardScoreClaimed) {
+            MISSIONS.rewardScoreClaimed = true;
+            GAME.coin += 250;
+            alert(
+                "🏆 Misi skor selesai!\n+250 coin"
+            );
+            updateUI();
+        }
+    }
+}
 
 function saveGame() {
     const saveData = {
@@ -56,7 +125,6 @@ function loadGame() {
     T.textContent = GAME.best;
     C.textContent = GAME.coin;
     L.textContent = GAME.level;
-
     B.innerHTML = "";
     GAME.cells = [];
     for (let y = 0; y < G; y++) {
@@ -98,7 +166,6 @@ function loadGame() {
     return true;
 }
 T.textContent=GAME.best;
-
 const COLORS = [
     "#39ff88",
     "#5ab4ff",
@@ -106,8 +173,6 @@ const COLORS = [
     "#ff6b6b",
     "#ae7cff"
 ];
-
-
 const SHAPES=[
 [[1]],
 [[1,1]],
@@ -148,9 +213,6 @@ const playBtn = document.getElementById("playBtn");
 const menuBest = document.getElementById("menuBest");
 
 menuBest.textContent = GAME.best;
-
-
-
 function makePieces(){
 P.innerHTML="";
 GAME.hand=[];
@@ -176,7 +238,6 @@ b.style.background = `
         ${color} 85%
     )
 `;
-
 b.style.boxShadow = `
     inset 0 2px 5px rgba(255,255,255,.18),
     inset 0 -4px 8px rgba(0,0,0,.25),
@@ -211,7 +272,6 @@ if (color) {
         ${color} 85%
     )
 `;
-
 c.style.boxShadow = `
     inset 0 2px 5px rgba(255,255,255,.18),
     inset 0 -4px 8px rgba(0,0,0,.25),
@@ -227,13 +287,10 @@ c.style.boxShadow = `
 makeBoard();
 makePieces();
 drawBoard();
-
 console.log("ENGINE PART 1 OK");
-
 /*==========================
  BLOCK BLAST ENGINE
 ==========================*/
-
 let PICK = null;
 let OFFX = 0;
 let OFFY = 0;
@@ -248,7 +305,6 @@ function updateSize() {
     const cell = B.querySelector(".cell");
     SIZE = cell.getBoundingClientRect().width;
 }
-
 updateSize();
 addEventListener(
 "resize",
@@ -416,7 +472,6 @@ return true;
 }
 
 async function placePiece(p, x, y) {
-
 for(let r=0;r<p.shape.length;r++)
 for(let c=0;c<p.shape[r].length;c++){
     if(!p.shape[r][c]) continue;
@@ -466,6 +521,8 @@ const addScore =
     .filter(Boolean)
     .length * 10;
 GAME.score += addScore;
+updateUI();
+updateMissionUI();
 showScore(
     "+" + addScore,
     window.innerWidth / 2,
@@ -604,6 +661,16 @@ async function clearLines() {
 ) {
     return;
 }
+const cleared = rows.length + cols.length;
+
+MISSIONS.lines += cleared;
+
+if (MISSIONS.lines > 5) {
+    MISSIONS.lines = 5;
+}
+
+updateMissionUI();
+
     const flash = [];
     rows.forEach(y => {
         for (let x = 0; x < G; x++) {
@@ -642,7 +709,6 @@ rows.forEach(y => {
         });
     }
 });
-
 // Ambil semua balok kolom
 cols.forEach(x => {
     for (let y = 0; y < G; y++) {
@@ -652,10 +718,8 @@ cols.forEach(x => {
         });
     }
 });
-
 // Hilangkan duplikat
 const unique = [];
-
 cellsToRemove.forEach(c => {
     if (
         !unique.some(
@@ -748,6 +812,8 @@ else {
 }
 const totalBonus = bonus + (lines * 50);
 GAME.score += totalBonus;
+updateUI();
+updateMissionUI();
 showScore(
     "+" + totalBonus,
     window.innerWidth / 2,
@@ -786,6 +852,7 @@ X.onclick = () => {
     GAME.score = 0;
     GAME.coin = 0;
     GAME.level = 1;
+    MISSIONS.play = 1;updateMissionUI();
     comboStreak = 0;
     localStorage.removeItem("block_save");
     S.textContent = GAME.score;
@@ -796,9 +863,7 @@ X.onclick = () => {
     makePieces();
     drawBoard();
 };
-
 /* SKOR TERTINGGI */
-
 function saveBest(){
 if(
 GAME.score>
@@ -881,6 +946,7 @@ playBtn.onclick = () => {
     GAME.score = 0;
     GAME.coin = 0;
     GAME.level = 1;
+    MISSIONS.play = 1;updateMissionUI();
     localStorage.removeItem("block_save");
     S.textContent = GAME.score;
     C.textContent = GAME.coin;
@@ -1144,6 +1210,7 @@ restartPauseBtn.onclick = () => {
     GAME.score = 0;
     GAME.coin = 0;
     GAME.level = 1;
+    MISSIONS.play = 1;updateMissionUI();
     comboStreak = 0;
     localStorage.removeItem("block_save");
     S.textContent = GAME.score;
