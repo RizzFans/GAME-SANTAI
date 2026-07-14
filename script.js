@@ -888,8 +888,6 @@ async function gameOver() {
 ==========================*/
 X.onclick = () => {
     GAME.score = 0;
-    GAME.coin = 0;
-    GAME.level = 1;
    if (MISSIONS.play < 1) {
     MISSIONS.play++;
     saveMissions();
