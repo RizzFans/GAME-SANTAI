@@ -73,8 +73,8 @@ closeMission.onclick = () => {    missionPanel.classList.add("hide");};
 const GAME = {
     score: 0,
     best: +localStorage.getItem("block_best") || 0,
-    coin: 0,
-    level: 1,
+    coin: +localStorage.getItem("block_coin") || 0,
+    level: +localStorage.getItem("block_level") || 1,
     grid: [],
     cells: [],
     hand: []
@@ -376,6 +376,8 @@ function updateUI() {
     document.getElementById("menuBest").textContent = GAME.best;
     document.getElementById("menuCoin").textContent = GAME.coin;
     document.getElementById("menuLevel").textContent = GAME.level;
+    localStorage.setItem("block_coin", GAME.coin);
+    localStorage.setItem("block_level", GAME.level);
     updateRank();
 }
 const MISSIONS = JSON.parse(localStorage.getItem("block_missions")) || {
@@ -973,8 +975,6 @@ playerNameText.textContent =USERNAME;
     const yakin = confirm("Mulai game baru?");
     if (!yakin) return;
     GAME.score = 0;
-    GAME.coin = 0;
-    GAME.level = 1;
    if (MISSIONS.play < 1) {
     MISSIONS.play++;
     saveMissions();
@@ -982,9 +982,7 @@ playerNameText.textContent =USERNAME;
     updateMissionUI();
     // updateSpinButton();
     localStorage.removeItem("block_save");
-    S.textContent = GAME.score;
-    C.textContent = GAME.coin;
-    L.textContent = GAME.level;
+    updateUI();
     makeBoard();
     makePieces();
     drawBoard();
