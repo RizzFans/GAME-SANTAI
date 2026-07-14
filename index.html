@@ -7,8 +7,27 @@
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+   <div id="loadingScreen">
+    <div class="loading-bg"></div>
+    <div class="loading-container">
+        <div class="loading-blocks">
+            <div class="load-block"></div>
+            <div class="load-block"></div>
+            <div class="load-block"></div>
+        </div>
+        <h1 class="loading-title">
+            BLOCK PUZZLE
+        </h1>
+        <div class="loading-bar">
+            <div id="loadingFill"></div>
+        </div>
+        <p id="loadingPercent">
+            0%
+        </p>
+    </div>
+</div>
+
 <div id="menu" class="menu">
     <div class="bg-block b1"></div>
     <div class="bg-block b2"></div>
@@ -19,27 +38,135 @@
     <h1 class="logo">
         BLOCK PUZZLE
     </h1>
-    <p class="best-score">
-        Score Tertinggi: <span id="menuBest">0</span>
-    </p>
-    <button id="playBtn">
+<div id="usernamePopup" class="popup">
+    <div class="popup-box">
+        <h2>Selamat Datang</h2>
+        <p>Buat username dulu</p>
+        <input
+            type="text"
+            id="usernameInput"
+            placeholder="Masukkan username">
+        <button id="saveUsername">SIMPAN</button>
+    </div>
+</div>
+  <div class="top-profile">
+    <div class="avatar-box">
+    <img id="avatarImg"
+        src="https://api.dicebear.com/7.x/bottts/svg?seed=Player">
+    <label for="avatarInput" class="avatar-edit">
+        📷
+    </label>
+    <input
+        type="file"
+        id="avatarInput"
+        accept="image/*"
+        hidden>
+</div>
+    <div class="profile-info">
+        <button id="changeNameBtn">
+        ✏️ Ganti Nickname
+    </button>
+        <h3 id="playerName"></h3>
+        <div class="player-rank">
+            🏆 Rookie
+        </div>
+    </div>
+    <div class="mini-box">
+        <span>Lv.</span>
+        <b id="menuLevel">1</b>
+    </div>
+    <div class="profile-mini-stats">
+        <div class="mini-box">
+            <span>⭐ Best</span>
+            <b id="menuBest">0</b>
+        </div>
+        <div class="mini-box">
+            <span>Coin</span>
+            <b id="menuCoin">0</b>
+        </div>
+    </div>
+</div>
+
+    <button id="playBtn" class="menu-button">
         ▶ Main
     </button>
-    <button id="continueBtn">
+    <button id="continueBtn" class="menu-button">
         ⏯ Lanjutkan Main
     </button>
-    <button id="tutorialBtn">
+    <button id="tutorialBtn" class="menu-button">
         📖 Cara Main
     </button>
+    <!-- <button id="spinBtn">
+        🎰 Lucky Spin
+    </button> -->
 </div>
+
+<!-- <div id="spinMenu" class="spin-menu hide">
+    <div class="spin-box">
+        <h2>🎰 Lucky Spin</h2>
+        <div class="wheel-wrapper">
+            <div class="led-ring">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="pointer"></div>
+            <div id="wheel" class="wheel">
+                <div class="slice s1">
+                    💰 5
+                </div>
+                <div class="slice s2">
+                    💰 15
+                </div>
+                <div class="slice s3">
+                    💎 250
+                </div>
+                <div class="slice s4">
+                    👑 50
+                </div>
+                <div class="slice s5">
+                    💀 ZONK
+                </div>
+                <div class="slice s6">
+                    🔥 75
+                </div>
+            </div>
+        </div>
+        
+        <div class="spin-buttons">
+    <button id="startSpin">
+        🎰 Spin 1x
+        <small>(Gratis)</small>
+    </button>
+    <button id="startSpin10">
+        🔥 Spin 10x
+        <small>(x10 hadiah)</small>
+    </button>
+</div>
+        <div id="spinResult" class="spin-result"></div>
+        <button id="closeSpin" class="close-btn">
+            Tutup
+        </button>
+    </div>
+
+</div> -->
 
 <div class="app hide" id="gameApp">
 <header>
    <div class="top-bar">
     <button id="pauseBtn">⏸️</button>
+    <button id="missionBtn">📅</button>
     <button id="hintBtn">💡</button>
     <button id="settingBtn">⚙️</button>
-    <button id="missionBtn">📅</button>
 </div>
 <h1>BLOCK PUZZLE</h1>
 
