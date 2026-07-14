@@ -1,4 +1,32 @@
 "use strict";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    query,
+    orderBy,
+    limit,
+    getDocs,
+    doc,
+    setDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCI3x7d9QNfAC9TEuy6Brw0BzQLkL2-kmA",
+    authDomain: "block-puzzle-5b92b.firebaseapp.com",
+    projectId: "block-puzzle-5b92b",
+    storageBucket: "block-puzzle-5b92b.firebasestorage.app",
+    messagingSenderId: "420646759926",
+    appId: "1:420646759926:web:734645dbee1876560babd7"
+};
+
+const app = initializeApp(firebaseConfig);
+
+window.db = getFirestore(app);
 /*==========================
  BLOCK BLAST ENGINE
 ==========================*/
@@ -51,6 +79,11 @@ const GAME = {
     cells: [],
     hand: []
 };
+const leaderboardBtn =document.getElementById("leaderboardBtn");
+const leaderboardMenu =document.getElementById("leaderboardMenu");
+const closeLeaderboard =document.getElementById("closeLeaderboard");
+leaderboardBtn.onclick = () => {leaderboardMenu.classList.remove("hide");};
+closeLeaderboard.onclick = () => { leaderboardMenu.classList.add("hide");};
 const playerNameText =document.getElementById("playerName");
 const avatarInput =document.getElementById("avatarInput");
 const changeNameBtn =document.getElementById("changeNameBtn");
@@ -63,7 +96,6 @@ if (USERNAME) {
     playerNameText.textContent = USERNAME;
     document.getElementById("avatarImg").src =
         `https://api.dicebear.com/7.x/bottts/svg?seed=${USERNAME}`;
-
 } else {
     usernamePopup.classList.remove("hide");
 }
@@ -113,25 +145,18 @@ avatarInput.onchange = (e) => {
     reader.readAsDataURL(file);
 };
 function loadProfile() {
-    const avatar =
-    localStorage.getItem(
-        "block_avatar"
-    );
-if (avatar) {
-    document.getElementById(
-        "avatarImg"
-    ).src = avatar;
-}
-    playerNameText.textContent =
-        USERNAME || "Pemain";
-    document.getElementById("menuBest").textContent =
-        GAME.best;
-    document.getElementById("menuCoin").textContent =
-        GAME.coin;
-    document.getElementById("menuLevel").textContent =
-        GAME.level;
-    document.getElementById("avatarImg").src =
-        `https://api.dicebear.com/7.x/bottts/svg?seed=${USERNAME || "Player"}`;
+    const avatar = localStorage.getItem("block_avatar");
+    if (avatar) {
+        avatarImg.src = avatar;
+    } else {
+        avatarImg.src =
+            `https://api.dicebear.com/7.x/bottts/svg?seed=${USERNAME || "Player"}`;
+
+    }
+    playerNameText.textContent = USERNAME || "Pemain";
+    menuBest.textContent = GAME.best;
+    menuCoin.textContent = GAME.coin;
+    menuLevel.textContent = GAME.level;
     updateRank();
 }
 function updateRank() {
@@ -146,6 +171,68 @@ function updateRank() {
     } else {
         rank.textContent = "🏆 Rookie";
     }
+}
+
+async function loadLeaderboard() {
+
+    const leaderboardList =
+        document.getElementById("leaderboardList");
+
+    leaderboardList.innerHTML = "Memuat...";
+
+    const q = query(
+        collection(window.db, "leaderboard"),
+        orderBy("score", "desc"),
+        limit(10)
+    );
+
+    const snapshot = await getDocs(q);
+
+    let html = "";
+
+    snapshot.forEach((doc) => {
+
+        const data = doc.data();
+
+        html += `
+            <div class="leader-item">
+                <span>${data.username}</span>
+                <b>${data.score}</b>
+            </div>
+        `;
+
+    });
+
+    leaderboardList.innerHTML =
+        html || "<p>Belum ada pemain.</p>";
+}
+leaderboardBtn.onclick = async () => {
+
+    leaderboardMenu.classList.remove("hide");
+
+    await loadLeaderboard();
+
+};
+async function saveScoreGlobal() {
+
+    await setDoc(
+
+        doc(
+            window.db,
+            "leaderboard",
+            USERNAME
+        ),
+
+        {
+            username: USERNAME,
+            score: GAME.best,
+            level: GAME.level,
+            coin: GAME.coin,
+            updatedAt: Date.now()
+        }
+
+    );
+
 }
 // const spinBtn =
 //     document.getElementById("spinBtn");
@@ -320,7 +407,6 @@ function updateMissionUI() {
     // Misi: skor 2000
 if (MISSIONS.score >= 2000) {
     m3.parentElement.classList.add("done");
-
     if (!MISSIONS.rewardScoreClaimed) {MISSIONS.rewardScoreClaimed = true;GAME.coin += 250;
         showToast("🏆 Misi skor selesai!\n+250 coin","success");
         updateUI();
@@ -786,20 +872,28 @@ saveGame();
 drawBoard();
 }
 
-function gameOver(){
-for(let p of GAME.hand){
-for(let y=0;y<G;y++){
-for(let x=0;x<G;x++){
-if(canPlace(p,x,y)){
-return false;
-}
-}
-}
-}
-F.textContent=
-GAME.score;
-O.classList.remove("hide");
-return true;
+async function gameOver() {
+
+    for (let p of GAME.hand) {
+        for (let y = 0; y < G; y++) {
+            for (let x = 0; x < G; x++) {
+
+                if (canPlace(p, x, y)) {
+                    return false;
+                }
+
+            }
+        }
+    }
+
+    F.textContent = GAME.score;
+
+    O.classList.remove("hide");
+
+    await saveScoreGlobal();
+    await loadLeaderboard();
+
+    return true;
 }
 /*==========================
  BLOCK BLAST ENGINE
@@ -1107,3 +1201,4 @@ function showToast(text, type = "") {toast.textContent = text;toast.className = 
 loadProfile();
 updateUI();
 updateMissionUI();
+loadLeaderboard();
