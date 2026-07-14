@@ -174,7 +174,6 @@ body{
     font-size: 18px;
     cursor: pointer;
 }
-
 .help-box{
     width: min(90%, 340px);
     padding: 25px;
@@ -203,114 +202,57 @@ body{
     background: #ff5252;
     color: white;
 }
-
-
 /* ======================
-   SHOP  MENU
+  LEADERBOARD
 ====================== */
-
-.shop-item{
-
-    background:#243449;
-
+.leaderboard{
+    position:fixed;
+    top:20px;
+    right:20px;
+    width:280px;
+    padding:16px;
     border-radius:18px;
-
-    padding:14px;
-
-    margin-bottom:14px;
-
-    box-shadow:
-        0 10px 25px rgba(
-            0,
-            0,
-            0,
-            .3
-        );
-}
-
-.shop-preview{
-
-    display:flex;
-
-    gap:8px;
-
-    justify-content:center;
-
-    margin-bottom:14px;
-}
-
-.shop-color{
-
-    width:34px;
-
-    height:34px;
-
-    border-radius:10px;
-
-    border:2px solid rgba(
-        255,
-        255,
-        255,
-        .15
-    );
-}
-
-.shop-info{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-}
-
-.shop-info h3{
-
-    font-size:18px;
-}
-
-.shop-info button{
-
-    width:110px;
-
-    padding:10px;
-
-    border:none;
-
-    border-radius:10px;
-
-    font-weight:bold;
-}
-
-.buy{
-
-    background:#ffd93d;
-}
-
-.equip{
-
-    background:#39ff88;
-}
-
-.used{
-
-    background:#5ab4ff;
-}
-#shopBtn{
-    width:42px;
-    height:42px;
-    border:none;
-    border-radius:12px;
-    background:#243449;
+    background:rgba(15,20,40,.9);
+    border:1px solid #5ab4ff;
     color:white;
-    font-size:20px;
+    z-index:1000;
 }
-#shopList{
-    max-height:320px;
-    overflow-y:auto;
+.leaderboard h2{
+    margin-bottom:12px;
+    text-align:center;
+}
+.lb-item{
+    display:flex;
+    justify-content:space-between;
+    padding:8px 0;
+    border-bottom:1px solid #ffffff20;
+}
+.leaderboard-menu{
+    position:fixed;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:rgba(0,0,0,.7);
+    z-index:9999;
+}
+.leaderboard-box{
+    width:320px;
+    max-height:500px;
+    overflow:auto;
+    padding:20px;
+    border-radius:20px;
+    background:#1a2348;
+    border:1px solid #5ab4ff;
+}
+.leader-item{
+    display:flex;
+    justify-content:space-between;
+    padding:12px;
     margin-top:10px;
+    border-radius:12px;
+    background:#ffffff10;
 }
-
 /* ======================
    SETTINGS  MENU
 ====================== */
