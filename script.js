@@ -1,7 +1,6 @@
 "use strict";
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
 import {
     getFirestore,
     collection,
@@ -10,11 +9,13 @@ import {
     orderBy,
     limit,
     getDocs,
+    getDoc,
     doc,
-    setDoc
+    setDoc,
+    deleteDoc,
+    where
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 const firebaseConfig = {
     apiKey: "AIzaSyCI3x7d9QNfAC9TEuy6Brw0BzQLkL2-kmA",
     authDomain: "block-puzzle-5b92b.firebaseapp.com",
@@ -23,9 +24,7 @@ const firebaseConfig = {
     messagingSenderId: "420646759926",
     appId: "1:420646759926:web:734645dbee1876560babd7"
 };
-
 const app = initializeApp(firebaseConfig);
-
 window.db = getFirestore(app);
 /*==========================
  BLOCK BLAST ENGINE
@@ -40,21 +39,11 @@ const loader = setInterval(() => {progress += Math.floor(
     if (progress >= 100) {
         progress = 100;
         clearInterval(loader);
-        setTimeout(() => {
-            loadingScreen.style.transition =
-                "opacity .7s";
+        setTimeout(() => {loadingScreen.style.transition ="opacity .7s";
             loadingScreen.style.opacity = "0";
-            setTimeout(() => {
-                loadingScreen.remove();
-            }, 700);
-        }, 500);
-    }
-    loadingFill.style.width =
-        progress + "%";
-    loadingPercent.textContent =
-        progress + "%";
-}, 150);
-
+            setTimeout(() => {loadingScreen.remove();}, 700);}, 500);}
+    loadingFill.style.width =progress + "%";
+    loadingPercent.textContent =progress + "%";}, 150);
 const G=8;
 const B=document.getElementById("board");
 const P=document.getElementById("pieces");
@@ -91,42 +80,84 @@ const usernamePopup =document.getElementById("usernamePopup");
 const usernameInput =document.getElementById("usernameInput");
 const saveUsername =document.getElementById("saveUsername");
 let USERNAME =localStorage.getItem("block_username");
-if (USERNAME) {
-    usernamePopup.classList.add("hide");
-    playerNameText.textContent = USERNAME;
-    document.getElementById("avatarImg").src =
-        `https://api.dicebear.com/7.x/bottts/svg?seed=${USERNAME}`;
+if (USERNAME) {usernamePopup.classList.add("hide");
+    playerNameText.textContent = USERNAME;document.getElementById("avatarImg").src =`https://api.dicebear.com/7.x/bottts/svg?seed=${USERNAME}`;
 } else {
     usernamePopup.classList.remove("hide");
 }
-saveUsername.onclick = () => {
+let PLAYER_ID = localStorage.getItem("block_player_id");
+if (!PLAYER_ID) {PLAYER_ID = crypto.randomUUID();localStorage.setItem("block_player_id",PLAYER_ID);
+}
+saveUsername.onclick = async () => {
     const nama = usernameInput.value.trim();
     if (!nama) {showToast("Masukkan username!","error");
         return;
     }
-    USERNAME = nama;
-    localStorage.setItem(
-        "block_username",
-        USERNAME
+    if (!/^[a-zA-Z0-9_]+$/.test(nama)) {
+    showToast("Hanya huruf, angka, dan _","error");
+    return;
+}
+    if (nama.length < 3 ||nama.length > 15
+    ) {
+        showToast("Username harus 3-15 karakter!","error");
+        return;
+    }
+    const usernameRef = doc(
+        window.db,
+        "usernames",
+        nama.toLowerCase()
     );
-    playerNameText.textContent = USERNAME;
-    document.getElementById("avatarImg").src =
-        `https://api.dicebear.com/7.x/bottts/svg?seed=${USERNAME}`;
+    const usernameSnap =await getDoc(usernameRef);
+    if (usernameSnap.exists()) {showToast("Nickname sudah dipakai!","error");
+        return;
+    }
+    await setDoc(usernameRef, {
+        playerId: PLAYER_ID,
+        username: nama,
+        createdAt: Date.now()
+    });
+    USERNAME = nama;
+    localStorage.setItem("block_username",USERNAME);
+    playerNameText.textContent =USERNAME;
     usernamePopup.classList.add("hide");
     loadProfile();
+    await saveScoreGlobal();
 };
-changeNameBtn.onclick = () => {
-    const namaBaru = prompt(
-        "Masukkan nickname baru:",
-        USERNAME || "Pemain"
-    );
+changeNameBtn.onclick = async () => {
+    const namaBaru = prompt("Masukkan nickname baru:",USERNAME);
     if (!namaBaru) return;
-    USERNAME = namaBaru;
-    localStorage.setItem(
-        "block_username",
-        USERNAME
+    const nickname = namaBaru.trim();
+if (nickname.length < 3 ||nickname.length > 15) {
+    showToast("Username harus 3-15 karakter!","error");
+    return;
+}
+if (!/^[a-zA-Z0-9_]+$/.test(nickname)) {
+    showToast("Hanya huruf, angka, dan _","error");
+    return;
+}
+if (nickname.toLowerCase() ===USERNAME.toLowerCase()
+) {
+    showToast("Itu nickname kamu sekarang!","error");
+    return;
+}
+    const newUsernameRef = doc(window.db,"usernames",nickname.toLowerCase());
+    const snap = await getDoc(newUsernameRef);
+    if (snap.exists()) {showToast("Nickname sudah dipakai!","error");
+        return;
+    }
+    await deleteDoc(doc(window.db,"usernames",USERNAME.toLowerCase()));
+    await setDoc(newUsernameRef,
+        {
+            playerId: PLAYER_ID,
+            username: nickname,
+            updatedAt: Date.now()
+        }
     );
+    USERNAME = nickname;
+    localStorage.setItem("block_username",USERNAME);
     playerNameText.textContent = USERNAME;
+    await saveScoreGlobal();
+    showToast("Nickname berhasil diganti!","success");
 };
 avatarInput.onchange = (e) => {
     const file = e.target.files[0];
@@ -134,24 +165,16 @@ avatarInput.onchange = (e) => {
     const reader = new FileReader();
     reader.onload = function () {
         const image = reader.result;
-        document.getElementById(
-            "avatarImg"
-        ).src = image;
-        localStorage.setItem(
-            "block_avatar",
-            image
-        );
+        document.getElementById("avatarImg").src = image;
+        localStorage.setItem("block_avatar",image);
     };
     reader.readAsDataURL(file);
 };
 function loadProfile() {
     const avatar = localStorage.getItem("block_avatar");
-    if (avatar) {
-        avatarImg.src = avatar;
+    if (avatar) {avatarImg.src = avatar;
     } else {
-        avatarImg.src =
-            `https://api.dicebear.com/7.x/bottts/svg?seed=${USERNAME || "Player"}`;
-
+        avatarImg.src =`https://api.dicebear.com/7.x/bottts/svg?seed=${USERNAME || "Player"}`;
     }
     playerNameText.textContent = USERNAME || "Pemain";
     menuBest.textContent = GAME.best;
@@ -161,7 +184,6 @@ function loadProfile() {
 }
 function updateRank() {
     const rank = document.querySelector(".player-rank");
-
     if (GAME.level >= 50) {
         rank.textContent = "👑 Master";
     } else if (GAME.level >= 20) {
@@ -172,67 +194,39 @@ function updateRank() {
         rank.textContent = "🏆 Rookie";
     }
 }
-
 async function loadLeaderboard() {
-
     const leaderboardList =
-        document.getElementById("leaderboardList");
-
+     document.getElementById("leaderboardList");
     leaderboardList.innerHTML = "Memuat...";
-
-    const q = query(
-        collection(window.db, "leaderboard"),
-        orderBy("score", "desc"),
-        limit(10)
-    );
-
+    const q = query(collection(window.db, "leaderboard"),orderBy("score", "desc"),limit(10));
     const snapshot = await getDocs(q);
-
     let html = "";
-
     snapshot.forEach((doc) => {
-
         const data = doc.data();
-
         html += `
             <div class="leader-item">
                 <span>${data.username}</span>
                 <b>${data.score}</b>
             </div>
         `;
-
     });
-
-    leaderboardList.innerHTML =
-        html || "<p>Belum ada pemain.</p>";
+    leaderboardList.innerHTML =html || "<p>Belum ada pemain.</p>";
 }
-leaderboardBtn.onclick = async () => {
-
-    leaderboardMenu.classList.remove("hide");
-
+leaderboardBtn.onclick = async () => {leaderboardMenu.classList.remove("hide");
     await loadLeaderboard();
-
 };
 async function saveScoreGlobal() {
-
-    await setDoc(
-
-        doc(
-            window.db,
-            "leaderboard",
-            USERNAME
-        ),
-
-        {
+    await setDoc(doc(window.db,"leaderboard",PLAYER_ID),{
+             playerId: PLAYER_ID,
             username: USERNAME,
             score: GAME.best,
             level: GAME.level,
             coin: GAME.coin,
+            avatar:
+                localStorage.getItem("block_avatar") || "",
             updatedAt: Date.now()
         }
-
     );
-
 }
 // const spinBtn =
 //     document.getElementById("spinBtn");
@@ -415,7 +409,6 @@ if (MISSIONS.score >= 2000) {
         saveMissions();
     }
 }}
-
 function saveGame() {
     const saveData = {
         score: GAME.score,
@@ -426,7 +419,6 @@ function saveGame() {
         hand: GAME.hand.map(p => ({shape: p.shape,color: p.color}))
     };
     localStorage.setItem("block_save",JSON.stringify(saveData));}
-
 function loadGame() {
     const data = JSON.parse(localStorage.getItem("block_save"));
     if (!data) return false;
@@ -496,6 +488,7 @@ const SHAPES=[
 [[1,1,1],[0,0,1]]
 ];
 const clone=a=>structuredClone(a[Math.random()*a.length|0]);
+
 function makeBoard(){
 B.innerHTML="";
 GAME.grid=[];
@@ -514,6 +507,7 @@ const gameApp = document.getElementById("gameApp");
 const playBtn = document.getElementById("playBtn");
 const menuBest = document.getElementById("menuBest");
 menuBest.textContent = GAME.best;
+
 function makePieces(){
 P.innerHTML="";
 GAME.hand=[];
@@ -810,8 +804,7 @@ const cleared = rows.length + cols.length;
 MISSIONS.lines += cleared;
 if (MISSIONS.lines > 5) {MISSIONS.lines = 5;}
 saveMissions();
-updateMissionUI();
-   
+updateMissionUI();   
 const app = document.getElementById("gameApp");
 app.classList.add("shake");
 setTimeout(() => {app.classList.remove("shake");}, 300);
@@ -821,7 +814,7 @@ const cellsToRemove = [];
 rows.forEach(y => {for (let x = 0; x < G; x++) {cellsToRemove.push({x,y});}});
 // Ambil semua balok kolom
 cols.forEach(x => {for (let y = 0; y < G; y++) {cellsToRemove.push({x,y});}});
-// Hilangkan duplikat
+// Hapus duplikat
 const unique = [];
 cellsToRemove.forEach(c => {if (!unique.some(v => v.x === c.x &&v.y === c.y)) {unique.push(c);}});
 // Animasi hilang satu per satu
@@ -875,26 +868,19 @@ drawBoard();
 }
 
 async function gameOver() {
-
     for (let p of GAME.hand) {
         for (let y = 0; y < G; y++) {
             for (let x = 0; x < G; x++) {
-
                 if (canPlace(p, x, y)) {
                     return false;
                 }
-
             }
         }
     }
-
     F.textContent = GAME.score;
-
     O.classList.remove("hide");
-
     await saveScoreGlobal();
     await loadLeaderboard();
-
     return true;
 }
 /*==========================
@@ -945,7 +931,6 @@ function showScore(text, x, y){
     document.body.appendChild(el);
     setTimeout(() => {el.remove();}, 800);
 }
-
 function burst(x, y, color){
     for(let i = 0; i < 12; i++){
         const p =document.createElement("div");
@@ -960,18 +945,15 @@ function burst(x, y, color){
         document.body.appendChild(p);
         setTimeout(() => {p.remove();}, 600);}
 }
-
 /*==========================
 MENU
 ==========================*/
 const continueBtn =document.getElementById("continueBtn");
 const tutorialBtn =document.getElementById("tutorialBtn");
 playBtn.onclick = () => {
-
 document.getElementById("avatarImg").src =`https://api.dicebear.com/7.x/bottts/svg?seed=${USERNAME}`;
 localStorage.setItem("block_username",USERNAME);
 playerNameText.textContent =USERNAME;
-
     const yakin = confirm("Mulai game baru?");
     if (!yakin) return;
     GAME.score = 0;
@@ -1012,7 +994,6 @@ closeHelp.onclick = () => {helpMenu.classList.add("hide");};
 ==========================*/
 const audioCtx = new (window.AudioContext ||window.webkitAudioContext)();
 let soundEnabled = true;
-
 function playSound(freq, duration){
     if (!soundEnabled) return;
     const osc =audioCtx.createOscillator();
@@ -1063,9 +1044,7 @@ let themeIndex = 0;
 const themeBtn = document.getElementById("changeTheme");
 themeBtn.onclick = () => {themeIndex++;
     if (themeIndex >= themes.length
-    ) {
-        themeIndex = 0;
-    }
+    ) {themeIndex = 0;}
     const t = themes[themeIndex];
     document.documentElement
         .style
@@ -1079,20 +1058,13 @@ themeBtn.onclick = () => {themeIndex++;
     themeBtn.textContent =
         t.name;
 };
-
 const pauseBtn = document.getElementById("pauseBtn");
 const pauseMenu = document.getElementById("pauseMenu");
 const resumeBtn = document.getElementById("resumeBtn");
 const restartPauseBtn = document.getElementById("restartPauseBtn");
 const homeBtn = document.getElementById("homeBtn");
-pauseBtn.onclick = () => {
-    paused = true;
-    pauseMenu.classList.remove("hide");
-};
-resumeBtn.onclick = () => {
-    paused = false;
-    pauseMenu.classList.add("hide");
-};
+pauseBtn.onclick = () => {paused = true;pauseMenu.classList.remove("hide");};
+resumeBtn.onclick = () => {paused = false;pauseMenu.classList.add("hide");};
 restartPauseBtn.onclick = () => {
     GAME.score = 0;
     GAME.coin = 0;
@@ -1195,7 +1167,6 @@ function showToast(text, type = "") {toast.textContent = text;toast.className = 
     clearTimeout(toast.timer);
     toast.timer = setTimeout(() => {toast.classList.remove("show");}, 2500);
 }
-
 loadProfile();
 updateUI();
 updateMissionUI();
