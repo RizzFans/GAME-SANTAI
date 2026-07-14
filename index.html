@@ -96,6 +96,9 @@
     <button id="tutorialBtn" class="menu-button">
         📖 Cara Main
     </button>
+    <button id="leaderboardBtn" class="menu-button">
+    🏆 Leaderboard
+</button>
     <!-- <button id="spinBtn">
         🎰 Lucky Spin
     </button> -->
@@ -160,6 +163,22 @@
 
 </div> -->
 
+<!-- LEADERBOARD -->
+<div id="leaderboardMenu" class="leaderboard-menu hide">
+    <div class="leaderboard-box">
+        <h2>🏆 Leaderboard Global</h2>
+        <div id="leaderboardList">
+            <div class="leader-item">
+                <span></span>
+                <b></b>
+            </div>
+        </div>
+        <button id="closeLeaderboard">
+            Tutup
+        </button>
+    </div>
+</div>
+
 <div class="app hide" id="gameApp">
 <header>
    <div class="top-bar">
@@ -205,32 +224,24 @@
 </div>
 
 <div id="missionPanel" class="mission-panel hide">
-
     <div class="mission-box">
-
         <h3>📅 Misi Harian</h3>
-
         <div class="mission">
             <span>Main 1 kali</span>
             <span id="mission1">0 / 1</span>
         </div>
-
         <div class="mission">
             <span>Hapus 5 baris</span>
             <span id="mission2">0 / 5</span>
         </div>
-
         <div class="mission">
             <span>Skor 2000</span>
             <span id="mission3">0 / 2000</span>
         </div>
-
         <button id="closeMission">
             Tutup
         </button>
-
     </div>
-
 </div>
 </header>
 
@@ -311,6 +322,7 @@ MAIN LAGI
 
 
 <div id="toast" class="toast"></div>
-<script src="script.js"></script>
+
+<script type="module" src="script.js"></script>
 </body>
 </html>
