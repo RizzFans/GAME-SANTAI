@@ -882,8 +882,8 @@ h1{
     box-shadow: var(--shadow);
 }
 .block{
-    width:25px;
-    height:25px;
+    width: calc(var(--size, 40px) * 0.65);
+    height: calc(var(--size, 40px) * 0.65);
     border-radius:14px;
     position:relative;
     border: 2px solid rgba(255,255,255,.08);
