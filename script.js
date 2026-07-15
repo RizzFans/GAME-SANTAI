@@ -25,7 +25,11 @@ const firebaseConfig = {
     appId: "1:420646759926:web:734645dbee1876560babd7"
 };
 const app = initializeApp(firebaseConfig);
-window.db = getFirestore(app);
+let PLAYER_ID = localStorage.getItem("block_player_id");
+if (!PLAYER_ID) {PLAYER_ID = crypto.randomUUID();
+localStorage.setItem("block_player_id",PLAYER_ID);
+}
+window.PLAYER_ID = PLAYER_ID;
 /*==========================
  BLOCK BLAST ENGINE
 ==========================*/
@@ -84,9 +88,6 @@ if (USERNAME) {usernamePopup.classList.add("hide");
     playerNameText.textContent = USERNAME;document.getElementById("avatarImg").src =`https://api.dicebear.com/7.x/bottts/svg?seed=${USERNAME}`;
 } else {
     usernamePopup.classList.remove("hide");
-}
-let PLAYER_ID = localStorage.getItem("block_player_id");
-if (!PLAYER_ID) {PLAYER_ID = crypto.randomUUID();localStorage.setItem("block_player_id",PLAYER_ID);
 }
 saveUsername.onclick = async () => {
     const nama = usernameInput.value.trim();
@@ -201,14 +202,23 @@ async function loadLeaderboard() {
     const q = query(collection(window.db, "leaderboard"),orderBy("score", "desc"),limit(10));
     const snapshot = await getDocs(q);
     let html = "";
-    snapshot.forEach((doc) => {
+    snapshot.forEach((doc, index) => {
         const data = doc.data();
-        html += `
-            <div class="leader-item">
-                <span>${data.username}</span>
-                <b>${data.score}</b>
-            </div>
-        `;
+        let rankIcon = "🏅";
+if (index === 0) rankIcon = "🥇";
+if (index === 1) rankIcon = "🥈";
+if (index === 2) rankIcon = "🥉";
+html += `
+    <div class="leader-item">
+        <span>
+            ${rankIcon}
+            ${data.username}
+        </span>
+        <b>
+            ${data.score}
+        </b>
+    </div>
+`;
     });
     leaderboardList.innerHTML =html || "<p>Belum ada pemain.</p>";
 }
@@ -216,8 +226,9 @@ leaderboardBtn.onclick = async () => {leaderboardMenu.classList.remove("hide");
     await loadLeaderboard();
 };
 async function saveScoreGlobal() {
-    await setDoc(doc(window.db,"leaderboard",PLAYER_ID),{
-             playerId: PLAYER_ID,
+    await setDoc(doc(window.db,"leaderboard",window.PLAYER_ID),
+        {
+            playerId: window.PLAYER_ID,
             username: USERNAME,
             score: GAME.best,
             level: GAME.level,
@@ -397,6 +408,8 @@ function updateMissionUI() {
     if (MISSIONS.lines >= 5) {m2.parentElement.classList.add("done");
         if (!MISSIONS.rewardLineClaimed) {MISSIONS.rewardLineClaimed = true;
             GAME.coin += 100;showToast("🎉 Misi selesai!\n+100 coin","success");
+            localStorage.setItem("block_coin",GAME.coin
+);
             updateUI();
         }}
     // Misi: skor 2000
@@ -404,11 +417,19 @@ function updateMissionUI() {
 if (MISSIONS.score >= 2000) {
     m3.parentElement.classList.add("done");
     if (!MISSIONS.rewardScoreClaimed) {MISSIONS.rewardScoreClaimed = true;GAME.coin += 250;
+        localStorage.setItem("block_coin", GAME.coin);
         showToast("🏆 Misi skor selesai!\n+250 coin","success");
         updateUI();
         saveMissions();
     }
 }}
+
+// function saveProgress() {
+//     localStorage.setItem("block_coin",GAME.coin);
+//     localStorage.setItem("block_level",GAME.level);
+//     localStorage.setItem("block_best",GAME.best);
+// }
+
 function saveGame() {
     const saveData = {
         score: GAME.score,
@@ -418,7 +439,8 @@ function saveGame() {
         grid: GAME.grid,
         hand: GAME.hand.map(p => ({shape: p.shape,color: p.color}))
     };
-    localStorage.setItem("block_save",JSON.stringify(saveData));}
+    localStorage.setItem("block_save",JSON.stringify(saveData));
+}
 function loadGame() {
     const data = JSON.parse(localStorage.getItem("block_save"));
     if (!data) return false;
@@ -704,8 +726,13 @@ updateMissionUI();
 showScore("+" + addScore,window.innerWidth / 2,window.innerHeight / 2);
 S.textContent=GAME.score;
 GAME.coin += addScore / 10;
+localStorage.setItem("block_coin", GAME.coin);
 if (GAME.score >= GAME.level * 1000) {
     GAME.level++;
+    localStorage.setItem(
+    "block_coin",
+    GAME.level
+);
     showCombo("LEVEL UP!");
     playSound(1500,0.4);
 }
@@ -888,12 +915,12 @@ async function gameOver() {
 ==========================*/
 X.onclick = () => {
     GAME.score = 0;
-    GAME.coin = 0;
-    GAME.level = 1;
-   if (MISSIONS.play < 1) {
-    MISSIONS.play++;
-    saveMissions();
-}
+    GAME.coin =+localStorage.getItem("block_coin") || 0;
+    GAME.level =+localStorage.getItem("block_level") || 1;
+    if (MISSIONS.play < 1) {
+        MISSIONS.play++;
+        saveMissions();
+    }
     updateMissionUI();
     comboStreak = 0;
     localStorage.removeItem("block_save");
@@ -1067,8 +1094,6 @@ pauseBtn.onclick = () => {paused = true;pauseMenu.classList.remove("hide");};
 resumeBtn.onclick = () => {paused = false;pauseMenu.classList.add("hide");};
 restartPauseBtn.onclick = () => {
     GAME.score = 0;
-    GAME.coin = 0;
-    GAME.level = 1;
     if (MISSIONS.play < 1) {
     MISSIONS.play++;
     saveMissions();
