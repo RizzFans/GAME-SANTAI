@@ -25,6 +25,8 @@ const firebaseConfig = {
     appId: "1:420646759926:web:734645dbee1876560babd7"
 };
 const app = initializeApp(firebaseConfig);
+window.db = getFirestore(app);
+console.log(window.db);
 let PLAYER_ID = localStorage.getItem("block_player_id");
 if (!PLAYER_ID) {PLAYER_ID = crypto.randomUUID();
 localStorage.setItem("block_player_id",PLAYER_ID);
@@ -199,6 +201,7 @@ async function loadLeaderboard() {
     const leaderboardList =
      document.getElementById("leaderboardList");
     leaderboardList.innerHTML = "Memuat...";
+    console.log("DB:", window.db);
     const q = query(collection(window.db, "leaderboard"),orderBy("score", "desc"),limit(10));
     const snapshot = await getDocs(q);
     let html = "";
