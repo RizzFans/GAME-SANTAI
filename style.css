@@ -12,6 +12,9 @@
     padding:0;
     box-sizing:border-box;
 }
+html {
+    -webkit-text-size-adjust: 100%;
+}
 html,
 body{
     width:100%;
@@ -1234,25 +1237,7 @@ SPIN
     z-index:9999;
     pointer-events:none;
     cursor:grabbing;
-    transform:scale(1.08);
-    filter:
-    drop-shadow(
-        0 0 12px rgba(
-            255,
-            255,
-            255,
-            .6
-        )
-    )
-    drop-shadow(
-        0 0 25px rgba(
-            255,
-            255,
-            255,
-            .3
-        )
-    );
-transform:scale(1.12)rotate(-3deg);}
+    transform:scale(1.08);}
 
 .row{
     display:flex;
