@@ -35,21 +35,43 @@ window.PLAYER_ID = PLAYER_ID;
 /*==========================
  BLOCK BLAST ENGINE
 ==========================*/
-const loadingFill =document.getElementById("loadingFill");
-const loadingPercent =document.getElementById("loadingPercent");
-const loadingScreen =document.getElementById("loadingScreen");
+const loadingFill = document.getElementById("loadingFill");
+const loadingPercent = document.getElementById("loadingPercent");
+const loadingScreen = document.getElementById("loadingScreen");
 let progress = 0;
-const loader = setInterval(() => {progress += Math.floor(
-        Math.random() * 10
-    ) + 3;
-    if (progress >= 100) {
+function updateLoading() {
+    if (progress < 50) {
+        progress += Math.floor(Math.random() * 8) + 5;
+    } else if (progress < 80) {
+        progress += Math.floor(Math.random() * 5) + 2;
+    } else if (progress < 95) {
+        progress += Math.floor(Math.random() * 3) + 1;
+    } else {
+        progress += 1;
+    }
+    if (progress > 100) {
         progress = 100;
-        clearInterval(loader);
-        setTimeout(() => {loadingScreen.style.transition ="opacity .7s";
+    }
+    loadingFill.style.width = progress + "%";
+    loadingPercent.textContent = progress + "%";
+    if (progress >= 100) {
+        setTimeout(() => {
+            loadingScreen.style.transition = "opacity .7s ease";
             loadingScreen.style.opacity = "0";
-            setTimeout(() => {loadingScreen.remove();}, 700);}, 500);}
-    loadingFill.style.width =progress + "%";
-    loadingPercent.textContent =progress + "%";}, 150);
+            setTimeout(() => {loadingScreen.remove();}, 700);}, 500);
+        return;
+    }
+    let nextDelay;
+    if (progress < 50) {
+        nextDelay = 880;
+    } else if (progress < 80) {
+        nextDelay = 150;
+    } else {
+        nextDelay = 280;
+    }
+    setTimeout(updateLoading, nextDelay);
+}
+updateLoading();
 const G=8;
 const B=document.getElementById("board");
 const P=document.getElementById("pieces");
