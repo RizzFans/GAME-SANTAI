@@ -34,7 +34,6 @@ body{
     -webkit-user-select:none;
     -webkit-tap-highlight-color:transparent;
 }
-
 body{
     min-height:100vh;
     display:flex;
@@ -306,12 +305,12 @@ body{
     padding:0;
     border:none;
     border-radius:12px;
-    background:#243449;
+    background: rgba(255,255,255,.12);
+    backdrop-filter: blur(10px);
     color:white;
     font-size:22px;
     cursor:pointer;
 }
-
 /* =====================
    SETTINGS
 ===================== */
@@ -373,7 +372,6 @@ body{
         transform:scale(1);
     }
 }
-
 /* ======================
    PAUSE MENU BARU
 ====================== */
@@ -464,7 +462,6 @@ body{
 /* ======================
    BACKGROUND MENU
 ====================== */
-
 #menu{
     position: fixed;
     inset: 0;
@@ -481,7 +478,6 @@ body{
         );
     z-index: 1000;
 }
-
 .logo{
     font-size: 48px;
     font-weight: bold;
@@ -491,9 +487,7 @@ body{
 
     animation: glow 2s infinite;
 }
-
 @keyframes glow{
-
     0%{
         transform: scale(1);
     }
@@ -504,7 +498,6 @@ body{
         transform: scale(1);
     }
 }
-
 .best-score{
     font-size: 22px;
     font-weight: bold;
@@ -802,7 +795,6 @@ h1{
             scale(1.4);
     }
 }
-
 .combo{
     position: fixed;
     left: 50%;
@@ -859,7 +851,6 @@ h1{
             scale(.8);
     }
 }
-
 .score{
     display:grid;
     grid-template-columns:1fr 1fr;
