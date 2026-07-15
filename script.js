@@ -199,31 +199,48 @@ function updateRank() {
 }
 async function loadLeaderboard() {
     const leaderboardList =
-     document.getElementById("leaderboardList");
+        document.getElementById("leaderboardList");
     leaderboardList.innerHTML = "Memuat...";
-    console.log("DB:", window.db);
-    const q = query(collection(window.db, "leaderboard"),orderBy("score", "desc"),limit(10));
+    const q = query(
+        collection(window.db, "leaderboard"),
+        orderBy("score", "desc"),
+        limit(10)
+    );
     const snapshot = await getDocs(q);
     let html = "";
     snapshot.forEach((doc, index) => {
         const data = doc.data();
         let rankIcon = "🏅";
-if (index === 0) rankIcon = "🥇";
-if (index === 1) rankIcon = "🥈";
-if (index === 2) rankIcon = "🥉";
-html += `
-    <div class="leader-item">
-        <span>
-            ${rankIcon}
-            ${data.username}
-        </span>
-        <b>
-            ${data.score}
-        </b>
-    </div>
-`;
+        if (index === 0) rankIcon = "🥇";
+        if (index === 1) rankIcon = "🥈";
+        if (index === 2) rankIcon = "🥉";
+
+        html += `
+            <div class="leader-item">
+                <img
+                    class="leader-avatar"
+                    src="${
+                        data.avatar ||
+                        "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                    }"
+                >
+                <div class="leader-info">
+                    <div class="leader-name">
+                        ${rankIcon} ${data.username}
+                    </div>
+                    <div class="leader-level">
+                        ⭐ Level ${data.level}
+                    </div>
+                </div>
+                <div class="leader-score">
+                    🏆 ${data.score}
+                </div>
+            </div>
+        `;
     });
-    leaderboardList.innerHTML =html || "<p>Belum ada pemain.</p>";
+
+    leaderboardList.innerHTML =
+        html || "<p>Belum ada pemain.</p>";
 }
 leaderboardBtn.onclick = async () => {leaderboardMenu.classList.remove("hide");
     await loadLeaderboard();
