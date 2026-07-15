@@ -861,7 +861,7 @@ h1{
  BOARD
 ======================*/
 .board{
-    --size: min(44px, calc((100vw - 40px) / 8));
+   --size:clamp(34px,10vw,42px);
     display:grid;
     grid-template-columns:repeat(8,var(--size));
     grid-template-rows:repeat(8,var(--size));
@@ -1275,13 +1275,25 @@ SPIN
     transform:
         scale(.96);
 }
-@media (max-width: 480px){
-    .spin-buttons{
-        flex-direction:column;
+@media screen and (max-width: 480px) {
+    body {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
     }
-    .spin-buttons button{
-        width:100%;
+    .board {
+        --size: 39px;
     }
+    .menu-button {
+        width: 92vw;
+    }
+    .settings-box,
+    .popup-box,
+    .help-box {
+        width: 92vw;
+        max-height: 85dvh;
+        overflow-y: auto;
+    }
+
 }
 .spin-buttons small{
     display:block;
