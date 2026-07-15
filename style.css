@@ -563,7 +563,6 @@ body{
     cursor:pointer;
     font-size:12px;
 }
-
 #changeNameBtn{
     margin-top:6px;
     border:none;
@@ -612,7 +611,6 @@ body{
     color:white;
     font-size:15px;
 }
-
 .menu-button{
     width: 260px;
     padding: 16px;
@@ -686,19 +684,16 @@ body{
             rotate(0deg);
     }
 }   
-
 .subtitle{
     opacity:.8;
     margin-bottom:20px;
 }
-
 .menu-best{
     color: gold;
     margin-bottom:25px;
     font-size:20px;
     font-weight:bold;
 }
-
 .menu-btn{
     position: relative;
     z-index: 1000001;
@@ -720,7 +715,6 @@ body{
     background:#3939ff;
     color:white;
 }
-
 .app{
     width:100%;
     max-width:420px;
@@ -741,7 +735,6 @@ h1{
     text-shadow:
         0 3px 10px #0008;
 }
-
 /*======================
  SCORE
 ======================*/
@@ -792,9 +785,7 @@ h1{
     z-index: 100000000;
 }
 .combo.show {
-    animation:
-        comboPop .9s ease,
-        rainbow .9s linear;
+    animation:comboPop .9s ease,rainbow .9s linear;
 }
 @keyframes rainbow {
     0% {
@@ -843,13 +834,8 @@ h1{
     text-align:center;
     box-shadow:var(--shadow);
 }
-.card h2{
-    font-size:18px;
-    color: red;
-}
-.card span{
-    font-size:11px;
-}
+.card h2{font-size:18px;color: red;}
+.card span{font-size:11px;}
 
 .stats{
     display:grid;
@@ -861,23 +847,19 @@ h1{
  BOARD
 ======================*/
 .board{
-    --size: clamp(32px, 7vw, 44px);
-
+    --size: min(8vw, 42px);
     display: grid;
     grid-template-columns: repeat(8, var(--size));
     grid-template-rows: repeat(8, var(--size));
     gap: 4px;
-
     padding: 8px;
     width: fit-content;
     margin: 0 auto;
-
     background: linear-gradient(
         180deg,
         #3068ec,
         #e1e1e1
     );
-
     border-radius: 20px;
     box-shadow: var(--shadow);
 }
@@ -931,9 +913,7 @@ h1{
 .toast{
     position: fixed;
     left: 50%;
-    transform:
-        translateX(-50%)
-        translateY(100px);
+    transform:translateX(-50%)translateY(100px);
     min-width: 240px;
     padding: 14px 20px;
     border-radius: 14px;
@@ -948,15 +928,11 @@ h1{
     z-index: 999999;
     transition: .35s;
 }
-
 .toast.show{
     opacity: 1;
-    transform:
-        translateX(-50%)
-        translateY(0);
+    transform:translateX(-50%)translateY(0);
 }
-.toast.error{
-    background: #ff4d4d;
+.toast.error{background: #ff4d4d;
 }
 .toast.success {
     background: linear-gradient(
@@ -972,24 +948,17 @@ h1{
             94,
             .5
         );
-    animation:
-        popToast .4s ease;
+    animation:popToast .4s ease;
 }
 @keyframes popToast {
     0% {
-        transform:
-            translateX(-50%)
-            scale(.7);
+        transform:translateX(-50%)scale(.7);
     }
     100% {
-        transform:
-            translateX(-50%)
-            scale(1);
-    }
+        transform:translateX(-50%)scale(1);}
 }
 .cell.preview{
     outline:4px solid #ffd93d;
-
     box-shadow:
         0 0 15px #ffd93d,
         0 0 30px #ffd93d;
@@ -1027,83 +996,58 @@ h1{
 .mission-panel{
     position: fixed;
     inset: 0;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     background: rgba(0,0,0,.7);
-
     backdrop-filter: blur(8px);
-
     z-index: 999999;
 }
-
 .mission-box{
     width: min(90%, 260px);
-
     background: #1e293b;
-
     border-radius: 18px;
-
     padding: 18px;
 }
-
 .mission-box h3{
     text-align: center;
     margin-bottom: 12px;
     font-size: 18px;
 }
-
 .mission{
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     padding: 10px;
-
     margin-bottom: 8px;
-
     background: #243449;
-
     border-radius: 10px;
-
     font-size: 13px;
 }
-
 .mission.done{
     background: #39ff88;
     color: black;
     font-weight: bold;
 }
-
 #closeMission{
     margin-top: 10px;
     background: #ff5252;
     color: white;
 }
-
-.hide{
-    display: none !important;
+.hide{display: none !important;
 }
-
 /*======================
 SPIN
 ======================*/
 .spin-menu{
-
     position: fixed;
     inset: 0;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     background: rgba(0,0,0,.8);
-
     z-index: 999999;
 }
-
 .spin-box{
     width: min(90%, 360px);
     padding: 20px;
@@ -1111,7 +1055,6 @@ SPIN
     background: #1e293b;
     text-align: center;
 }
-
 .wheel-wrapper{
     position:relative;
     width:280px;
@@ -1121,7 +1064,6 @@ SPIN
     justify-content:center;
     align-items:center;
 }
-
 .wheel{
     width:100%;
     height:100%;
@@ -1138,11 +1080,9 @@ SPIN
             #a855f7 240deg 300deg,
             #ff914d 300deg 360deg
         );
-
     box-shadow:
         0 0 20px rgba(255,255,255,.25),
         0 0 40px rgba(90,180,255,.3);
-
     transition:
         transform 5s cubic-bezier(
             .12,
@@ -1151,7 +1091,6 @@ SPIN
             1
         );
 }
-
 .pointer{
     position:absolute;
     top:-18px;
@@ -1166,10 +1105,8 @@ SPIN
         drop-shadow(
             0 0 10px #ffd93d
         );
-
     z-index:10;
 }
-
 .slice{
     position:absolute;
     left:50%;
@@ -1189,34 +1126,22 @@ SPIN
         );
 }
 .s1{
-    transform:
-        rotate(30deg)
-        translateY(-105px);
+    transform:rotate(30deg)translateY(-105px);
 }
 .s2{
-    transform:
-        rotate(90deg)
-        translateY(-105px);
+    transform:rotate(90deg)translateY(-105px);
 }
 .s3{
-    transform:
-        rotate(150deg)
-        translateY(-105px);
+    transform:rotate(150deg)translateY(-105px);
 }
 .s4{
-    transform:
-        rotate(210deg)
-        translateY(-105px);
+    transform:rotate(210deg)translateY(-105px);
 }
 .s5{
-    transform:
-        rotate(270deg)
-        translateY(-105px);
+    transform:rotate(270deg)translateY(-105px);
 }
 .s6{
-    transform:
-        rotate(330deg)
-        translateY(-105px);
+    transform:translateY(-105px);
 }
 .spin-buttons{
     display:flex;
@@ -1270,8 +1195,7 @@ SPIN
         );
 }
 .spin-buttons button:active{
-    transform:
-        scale(.96);
+    transform:scale(.96);
 }
 .spin-buttons small{
     display:block;
@@ -1293,7 +1217,6 @@ SPIN
     margin-top:6px;
     padding:0;
 }
-
 .piece{
     display:inline-grid;
     gap:5px;
@@ -1306,8 +1229,6 @@ SPIN
     cursor:grab;
     transition:none;
 }
-
-
 .piece.drag{
     position:fixed !important;
     z-index:9999;
@@ -1331,17 +1252,13 @@ SPIN
             .3
         )
     );
-transform:
-    scale(1.12)
-    rotate(-3deg);
-}
+transform:scale(1.12)rotate(-3deg);}
 
 .row{
     display:flex;
     gap:8px;
     justify-content:center;
 }
-
 /*======================
  GAME OVER
 ======================*/
@@ -1353,11 +1270,7 @@ transform:
     align-items:center;
     background:#0009;
 }
-
-.hide{
-    display:none !important; 
-}
-
+.hide{display:none !important; }
 .box{
     width:min(90%,340px);
     background:var(--panel);
@@ -1367,11 +1280,7 @@ transform:
     box-shadow:
     0 25px 60px rgba(0,0,0,.45);
 }
-
-.box h1{
-    margin:18px 0;
-    font-size:48px;
-}
+.box h1{margin:18px 0;font-size:48px;}
 
 button{
     width:100%;
@@ -1384,19 +1293,12 @@ button{
     cursor:pointer;
     transition:.2s;
 }
-button:hover{
-    transform:scale(1.03);
-}
-button:active{
-    transform:scale(.96);
-}
-
+button:hover{transform:scale(1.03);}
+button:active{transform:scale(.96);}
 /*======================
  ANIMASI HAPUS BARIS
 ======================*/
-.app.shake {
-    animation: shakeBoard .3s ease;
-}
+.app.shake {animation: shakeBoard .3s ease;}
 @keyframes shakeBoard {
     0% { transform: translateX(0); }
     25% { transform: translateX(-6px); }
@@ -1623,59 +1525,40 @@ button:active{
     font-size:14px; 
     border-radius:10px;
 }
-
 /* ==========================
    RESPONSIVE SEMUA DEVICE
 ========================== */
-
 /* HP kecil */
 @media (max-width: 360px) {
-
-    .board {
-        --size: 34px;
-    }
-
-    .block {
-        width: 22px;
-        height: 22px;
-    }
+    .board {--size: 34px;}
+    .block {width: 22px;height: 22px;}
 }
-
 /* Android + iPhone */
 @media (min-width: 361px) and (max-width: 600px) {
-
-    .board {
-        --size: 38px;
-    }
-
-    .block {
-        width: 26px;
-        height: 26px;
-    }
+    .board {--size: 38px;}
+    .block {width: 26px;height: 26px;}
 }
-
 /* Tablet */
 @media (min-width: 601px) and (max-width: 900px) {
-
-    .board {
-        --size: 42px;
-    }
-
-    .block {
-        width: 28px;
-        height: 28px;
-    }
+    .board {--size: 42px;}
+    .block {width: 28px;height: 28px;}
 }
-
 /* Laptop */
+@media (min-width: 901px) and (max-width: 1400px) {
+    .board {--size: clamp(30px, 2vw, 36px);}
+    .app {max-width: 520px;}
+    .pieces {gap: 8px;}
+}
 @media (min-width: 901px) {
-
-    .board {
-        --size: 44px;
-    }
-
-    .block {
-        width: 30px;
-        height: 30px;
-    }
+    body{justify-content: center;overflow-y: auto; padding: 8px 0;}
+    .app{ max-width: 460px;}
+    .board{--size: 28px;}
+    .block{width: 21px;height: 21px;}
+    .score,.stats{gap: 6px;margin-bottom: 6px;}
+    .pieces{margin-top: 4px;gap: 8px;}
+}
+/* Monitor besar */
+@media (min-width: 1401px) {
+    .board {--size: 38px;}
+    .app {max-width: 580px;}
 }
