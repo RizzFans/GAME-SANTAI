@@ -240,7 +240,7 @@ body{
     z-index:9999;
 }
 .leaderboard-box{
-    width:320px;
+    width:390px;
     max-height:500px;
     overflow:auto;
     padding:20px;
@@ -250,11 +250,46 @@ body{
 }
 .leader-item{
     display:flex;
-    justify-content:space-between;
+    align-items:center;
+    gap:12px;
     padding:12px;
     margin-top:10px;
     border-radius:12px;
     background:#ffffff10;
+}
+/* Avatar */
+.leader-avatar{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid #ffd93d;
+    flex-shrink:0;
+}
+/* Info pemain */
+.leader-info{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+.leader-name{
+    font-size:15px;
+    font-weight:700;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+.leader-level{
+    font-size:12px;
+    color:#ffd93d;
+}
+/* Skor */
+.leader-score{
+    font-size:16px;
+    font-weight:700;
+    color:#ffffff;
+    text-align:right;
 }
 /* ======================
    SETTINGS  MENU
