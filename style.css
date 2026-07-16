@@ -903,8 +903,8 @@ h1{
     margin: 0 auto;
     background: linear-gradient(
         180deg,
-        #455769,
-        #201717
+        black,
+        black
     );
     border-radius: 20px;
     box-shadow: var(--shadow);
