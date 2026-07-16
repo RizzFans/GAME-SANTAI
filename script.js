@@ -16,6 +16,14 @@ import {
     where
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 const firebaseConfig = {
     apiKey: "AIzaSyCI3x7d9QNfAC9TEuy6Brw0BzQLkL2-kmA",
     authDomain: "block-puzzle-5b92b.firebaseapp.com",
@@ -26,12 +34,16 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 window.db = getFirestore(app);
+const avatarImg = document.getElementById("avatarImg");
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+const loginBtn =document.getElementById("loginBtn");
 console.log(window.db);
-let PLAYER_ID = localStorage.getItem("block_player_id");
-if (!PLAYER_ID) {PLAYER_ID = crypto.randomUUID();
-localStorage.setItem("block_player_id",PLAYER_ID);
+let PLAYER_ID =localStorage.getItem("block_player_id");
+if (!PLAYER_ID) {PLAYER_ID =crypto.randomUUID();
+    localStorage.setItem("block_player_id",PLAYER_ID);
 }
-window.PLAYER_ID = PLAYER_ID;
+window.PLAYER_ID =PLAYER_ID;
 /*==========================
  BLOCK BLAST ENGINE
 ==========================*/
@@ -302,6 +314,200 @@ async function saveScoreGlobal() {
         }
     );
 }
+function saveGuestData() {
+    if (auth.currentUser) return;
+    localStorage.setItem(
+        "guest_username",
+        USERNAME || "Player"
+    );
+    localStorage.setItem(
+        "guest_best",
+        GAME.best
+    );
+    localStorage.setItem(
+        "guest_level",
+        GAME.level
+    );
+    localStorage.setItem(
+        "guest_coin",
+        GAME.coin
+    );
+    localStorage.setItem(
+        "guest_avatar",
+        localStorage.getItem(
+            "block_avatar"
+        ) || ""
+    );
+}
+function loadGuestData() {
+    USERNAME =
+        localStorage.getItem(
+            "guest_username"
+        ) || "Player";
+    GAME.best =
+        +localStorage.getItem(
+            "guest_best"
+        ) || 0;
+    GAME.level =
+        +localStorage.getItem(
+            "guest_level"
+        ) || 1;
+    GAME.coin =
+        +localStorage.getItem(
+            "guest_coin"
+        ) || 0;
+    const avatar =
+        localStorage.getItem(
+            "guest_avatar"
+        );
+    localStorage.setItem(
+        "block_username",
+        USERNAME
+    );
+    localStorage.setItem(
+        "block_best",
+        GAME.best
+    );
+    localStorage.setItem(
+        "block_level",
+        GAME.level
+    );
+    localStorage.setItem(
+        "block_coin",
+        GAME.coin
+    );
+    if (avatar) {
+        localStorage.setItem(
+            "block_avatar",
+            avatar
+        );
+    }
+    loadProfile();
+}
+async function loadGoogleData(user) {
+    const uid = user.uid;
+    window.PLAYER_ID = uid;
+    const ref = doc(
+        window.db,
+        "leaderboard",
+        uid
+    );
+    const snap =
+        await getDoc(ref);
+    if (!snap.exists()) {
+        const dataBaru = {
+            playerId: uid,
+            username:
+                user.displayName ||
+                "Player",
+            score: 0,
+            level: 1,
+            coin: 0,
+            avatar:
+                user.photoURL || ""
+        };
+        await setDoc(
+            ref,
+            dataBaru
+        );
+        USERNAME =
+            dataBaru.username;
+        GAME.best = 0;
+        GAME.level = 1;
+        GAME.coin = 0;
+    } else {
+        const data =
+            snap.data();
+        USERNAME =
+            data.username;
+        GAME.best =
+            data.score || 0;
+        GAME.level =
+            data.level || 1;
+        GAME.coin =
+            data.coin || 0;
+        if (data.avatar) {
+            localStorage.setItem(
+                "block_avatar",
+                data.avatar
+            );
+        }
+    }
+    localStorage.setItem(
+        "block_username",
+        USERNAME
+    );
+    localStorage.setItem(
+        "block_best",
+        GAME.best
+    );
+    localStorage.setItem(
+        "block_level",
+        GAME.level
+    );
+    localStorage.setItem(
+        "block_coin",
+        GAME.coin
+    );
+    loadProfile();
+}
+loginBtn.onclick = async () => {
+    if (auth.currentUser) {
+        await signOut(auth);
+        loadGuestData();
+        loginBtn.innerHTML = `
+            <img
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            >
+            <span>
+                Login with Google
+            </span>
+        `;
+
+        return;
+    }
+    try {
+        saveGuestData();
+        const result =
+            await signInWithPopup(
+                auth,
+                provider
+            );
+
+        await loadGoogleData(
+            result.user
+        );
+        loginBtn.innerHTML =
+            "Logout";
+        await saveScoreGlobal();
+    } catch (e) {
+        console.error(e);
+        showToast(
+            "Login gagal",
+            "error"
+        );
+    }
+};
+let authReady = false;
+onAuthStateChanged(auth, async (user) => {
+    authReady = true;
+    if (user) {
+        await loadGoogleData(user);
+        loginBtn.innerHTML = `
+            Logout
+        `;
+    } else {
+        loadGuestData();
+        loginBtn.innerHTML = `
+            <img
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            >
+            <span>
+                Login with Google
+            </span>
+        `;
+    }
+});
 // const spinBtn =
 //     document.getElementById("spinBtn");
 // const spinMenu =
