@@ -239,13 +239,30 @@ body{
     z-index:9999;
 }
 .leaderboard-box{
-    width:390px;
-    max-height:500px;
-    overflow:auto;
-    padding:20px;
-    border-radius:20px;
-    background:#1a2348;
-    border:1px solid #5ab4ff;
+    position: relative;
+    width: 390px;
+    top: 18px;
+    right: 18px;
+    max-height: 500px;
+    overflow: auto;
+    padding: 20px;
+    border-radius: 20px;
+    background: #1a2348;
+    border: 1px solid #5ab4ff;
+}
+#closeLeaderboardTop{
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
 }
 .leader-item{
     display:flex;
