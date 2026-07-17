@@ -479,6 +479,13 @@ async function loadGoogleData(user) {
         if (oldSnap.exists()) {
 
             const oldData = oldSnap.data();
+            if (
+    oldData.username === "Player" &&
+    localStorage.getItem("block_username")
+) {
+    oldData.username =
+        localStorage.getItem("block_username");
+}
 
             await setDoc(
                 ref,
@@ -489,7 +496,16 @@ async function loadGoogleData(user) {
                 }
             );
 
-            await deleteDoc(oldRef);
+            await setDoc(
+    oldRef,
+    {
+        migrated: true,
+        migratedTo: uid
+    },
+    {
+        merge: true
+    }
+);
 
             console.log(
                 "Data lama berhasil dipindahkan"
@@ -541,10 +557,25 @@ async function loadGoogleData(user) {
 
         const data = snap.data();
 
-        USERNAME = data.username;
-        GAME.best = data.score || 0;
-        GAME.level = data.level || 1;
-        GAME.coin = data.coin || 0;
+USERNAME =
+    data.username ||
+    localStorage.getItem("block_username") ||
+    "Player";
+
+GAME.best =
+    data.score ??
+    +localStorage.getItem("block_best") ??
+    0;
+
+GAME.level =
+    data.level ??
+    +localStorage.getItem("block_level") ??
+    1;
+
+GAME.coin =
+    data.coin ??
+    +localStorage.getItem("block_coin") ??
+    0;
 
         if (data.avatar) {
 
