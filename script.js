@@ -276,39 +276,60 @@ leaderboardBtn.onclick = async () => {leaderboardMenu.classList.remove("hide");
     await loadLeaderboard();
 };
 async function saveScoreGlobal() {
-    if (!USERNAME) return;
+
+    if (
+        !USERNAME ||
+        USERNAME === "Player"
+    ) {
+        return;
+    }
+
     const ref = doc(
         window.db,
         "leaderboard",
         window.PLAYER_ID
     );
+
     const snap = await getDoc(ref);
+
     const oldData = snap.exists()
         ? snap.data()
         : {};
+
     await setDoc(
         ref,
         {
             playerId: window.PLAYER_ID,
-            username: USERNAME,
+
+            username:
+                USERNAME ||
+                oldData.username,
+
             score: Math.max(
                 oldData.score || 0,
                 GAME.best || 0
             ),
+
             level: Math.max(
                 oldData.level || 1,
                 GAME.level || 1
             ),
+
             coin: Math.max(
                 oldData.coin || 0,
                 GAME.coin || 0
             ),
+
             avatar:
-                localStorage.getItem("block_avatar")
-                || oldData.avatar
-                || "",
+                localStorage.getItem(
+                    "block_avatar"
+                ) ||
+                oldData.avatar ||
+                "",
+
             updatedAt: Date.now()
         },
+
         {
             merge: true
         }
@@ -340,115 +361,207 @@ function saveGuestData() {
     );
 }
 function loadGuestData() {
+
     USERNAME =
         localStorage.getItem(
             "guest_username"
-        ) || "Player";
+        )
+        || localStorage.getItem(
+            "block_username"
+        )
+        || "Player";
+
     GAME.best =
         +localStorage.getItem(
             "guest_best"
-        ) || 0;
+        )
+        || +localStorage.getItem(
+            "block_best"
+        )
+        || 0;
+
     GAME.level =
         +localStorage.getItem(
             "guest_level"
-        ) || 1;
+        )
+        || +localStorage.getItem(
+            "block_level"
+        )
+        || 1;
+
     GAME.coin =
         +localStorage.getItem(
             "guest_coin"
-        ) || 0;
+        )
+        || +localStorage.getItem(
+            "block_coin"
+        )
+        || 0;
+
     const avatar =
         localStorage.getItem(
             "guest_avatar"
+        )
+        || localStorage.getItem(
+            "block_avatar"
         );
+
     localStorage.setItem(
         "block_username",
         USERNAME
     );
+
     localStorage.setItem(
         "block_best",
         GAME.best
     );
+
     localStorage.setItem(
         "block_level",
         GAME.level
     );
+
     localStorage.setItem(
         "block_coin",
         GAME.coin
     );
+
     if (avatar) {
+
         localStorage.setItem(
             "block_avatar",
             avatar
         );
     }
+
     loadProfile();
 }
 async function loadGoogleData(user) {
+
     const uid = user.uid;
-    window.PLAYER_ID = uid;
+
+    const oldPlayerId =
+        localStorage.getItem("block_player_id");
+
     const ref = doc(
         window.db,
         "leaderboard",
         uid
     );
-    const snap =
-        await getDoc(ref);
-    if (!snap.exists()) {
-        const dataBaru = {
-            playerId: uid,
-            username:
-                user.displayName ||
-                "Player",
-            score: 0,
-            level: 1,
-            coin: 0,
-            avatar:
-                user.photoURL || ""
-        };
-        await setDoc(
-            ref,
-            dataBaru
+
+    let snap = await getDoc(ref);
+
+    // PINDAHKAN DATA LAMA KE AKUN GOOGLE
+
+    if (!snap.exists() && oldPlayerId) {
+
+        const oldRef = doc(
+            window.db,
+            "leaderboard",
+            oldPlayerId
         );
-        USERNAME =
-            dataBaru.username;
-        GAME.best = 0;
-        GAME.level = 1;
-        GAME.coin = 0;
+
+        const oldSnap = await getDoc(oldRef);
+
+        if (oldSnap.exists()) {
+
+            const oldData = oldSnap.data();
+
+            await setDoc(
+                ref,
+                {
+                    ...oldData,
+                    playerId: uid,
+                    migratedAt: Date.now()
+                }
+            );
+
+            await deleteDoc(oldRef);
+
+            console.log(
+                "Data lama berhasil dipindahkan"
+            );
+
+            snap = await getDoc(ref);
+        }
+    }
+
+    window.PLAYER_ID = uid;
+
+    if (!snap.exists()) {
+
+        const dataBaru = {
+
+            playerId: uid,
+
+            username:
+                localStorage.getItem("block_username")
+                || user.displayName
+                || "Player",
+
+            score:
+                +localStorage.getItem("block_best")
+                || 0,
+
+            level:
+                +localStorage.getItem("block_level")
+                || 1,
+
+            coin:
+                +localStorage.getItem("block_coin")
+                || 0,
+
+            avatar:
+                localStorage.getItem("block_avatar")
+                || user.photoURL
+                || ""
+        };
+
+        await setDoc(ref, dataBaru);
+
+        USERNAME = dataBaru.username;
+        GAME.best = dataBaru.score;
+        GAME.level = dataBaru.level;
+        GAME.coin = dataBaru.coin;
+
     } else {
-        const data =
-            snap.data();
-        USERNAME =
-            data.username;
-        GAME.best =
-            data.score || 0;
-        GAME.level =
-            data.level || 1;
-        GAME.coin =
-            data.coin || 0;
+
+        const data = snap.data();
+
+        USERNAME = data.username;
+        GAME.best = data.score || 0;
+        GAME.level = data.level || 1;
+        GAME.coin = data.coin || 0;
+
         if (data.avatar) {
+
             localStorage.setItem(
                 "block_avatar",
                 data.avatar
             );
         }
     }
+
     localStorage.setItem(
         "block_username",
         USERNAME
     );
+
     localStorage.setItem(
         "block_best",
         GAME.best
     );
+
     localStorage.setItem(
         "block_level",
         GAME.level
     );
+
     localStorage.setItem(
         "block_coin",
         GAME.coin
     );
+
     loadProfile();
 }
 loginBtn.onclick = async () => {
