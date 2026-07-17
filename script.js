@@ -336,23 +336,36 @@ async function saveScoreGlobal() {
     );
 }
 function saveGuestData() {
+
     if (auth.currentUser) return;
+
+    if (
+        !USERNAME ||
+        USERNAME === "Player"
+    ) {
+        return;
+    }
+
     localStorage.setItem(
         "guest_username",
-        USERNAME || "Player"
+        USERNAME
     );
+
     localStorage.setItem(
         "guest_best",
         GAME.best
     );
+
     localStorage.setItem(
         "guest_level",
         GAME.level
     );
+
     localStorage.setItem(
         "guest_coin",
         GAME.coin
     );
+
     localStorage.setItem(
         "guest_avatar",
         localStorage.getItem(
@@ -603,22 +616,31 @@ loginBtn.onclick = async () => {
 };
 let authReady = false;
 onAuthStateChanged(auth, async (user) => {
+
     authReady = true;
+
     if (user) {
+
         await loadGoogleData(user);
-        loginBtn.innerHTML = `
-            Logout
-        `;
+
     } else {
-        loadGuestData();
-        loginBtn.innerHTML = `
-            <img
-                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-            >
-            <span>
-                Login with Google
-            </span>
-        `;
+
+        const username =
+            localStorage.getItem(
+                "block_username"
+            );
+
+        if (
+            username &&
+            username !== "Player"
+        ) {
+
+            loadGuestData();
+
+        } else {
+
+            loadProfile();
+        }
     }
 });
 // const spinBtn =
