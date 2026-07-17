@@ -1169,7 +1169,7 @@ localStorage.setItem("block_coin", GAME.coin);
 if (GAME.score >= GAME.level * 1000) {
     GAME.level++;
     localStorage.setItem(
-    "block_coin",
+    "block_level",
     GAME.level
 );
     showCombo("LEVEL UP!");
@@ -1323,7 +1323,10 @@ else {bonus = 3000;
 }
 const totalBonus = bonus + (lines * 50);
 GAME.score += totalBonus;
-if (MISSIONS.score < 2000) {MISSIONS.score = Math.min(GAME.score, 2000);}
+if (GAME.score > GAME.best) {GAME.best = GAME.score;
+    localStorage.setItem("block_best",GAME.best);
+    T.textContent = GAME.best;
+}
 saveMissions();
 updateUI();
 updateMissionUI();
