@@ -516,6 +516,10 @@ async function loadGoogleData(user) {
     }
 
     window.PLAYER_ID = uid;
+    localStorage.setItem(
+    "block_player_id",
+    uid
+);
 
     if (!snap.exists()) {
 
