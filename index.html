@@ -8,6 +8,7 @@
 <meta name="viewport"content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 </head>
 <body>
+
    <div id="loadingScreen">
     <div class="loading-bg"></div>
     <div class="loading-container">
@@ -18,15 +19,11 @@
             <div class="load-block"></div>
             <div class="load-block"></div>
         </div>
-        <h1 class="loading-title">
-            BLOCK PUZZLE
-        </h1>
+        <h1 class="loading-title">BLOCK PUZZLE</h1>
         <div class="loading-bar">
             <div id="loadingFill"></div>
         </div>
-        <p id="loadingPercent">
-            0%
-        </p>
+        <p id="loadingPercent">0%</p>
     </div>
 </div>
 
@@ -36,18 +33,12 @@
     <div class="bg-block b3"></div>
     <div class="bg-block b4"></div>
     <div class="bg-block b5"></div>
-
-    <h1 class="logo">
-        BLOCK PUZZLE
-    </h1>
-<div id="usernamePopup" class="popup">
+    <h1 class="logo">BLOCK PUZZLE</h1>
+    <div id="usernamePopup" class="popup">
     <div class="popup-box">
         <h2>Selamat Datang</h2>
         <p>Buat username dulu</p>
-        <input
-            type="text"
-            id="usernameInput"
-            placeholder="Masukkan username">
+        <input type="text" id="usernameInput" placeholder="Masukkan username">
         <button id="saveUsername">SIMPAN</button>
     </div>
 </div>
@@ -55,23 +46,14 @@
     <div class="avatar-box">
     <img id="avatarImg"
         src="https://api.dicebear.com/7.x/bottts/svg?seed=Player">
-    <label for="avatarInput" class="avatar-edit">
-        📷
-    </label>
-    <input
-        type="file"
-        id="avatarInput"
-        accept="image/*"
-        hidden>
+    <label for="avatarInput" class="avatar-edit">📷</label>
+    <input type="file" id="avatarInput" accept="image/*" hidden>
 </div>
     <div class="profile-info">
-        <button id="changeNameBtn">
-        ✏️ Ganti Nickname
-    </button>
+        <button id="changeNameBtn">✏️ Ganti Nickname </button>
         <h3 id="playerName"></h3>
-        <div class="player-rank">
-            🏆 Rookie
-        </div>
+        <h2 id="playerId"></h2>
+        <div class="player-rank">🏆 Rookie</div>
     </div>
     <div class="mini-box">
         <span>Lv.</span>
@@ -89,28 +71,19 @@
     </div>
 </div>
 
-    <button id="playBtn" class="menu-button">
-        ▶ Mulai Bermain
-    </button>
-    <button id="continueBtn" class="menu-button">
-        ⏯ Lanjutkan Main
-    </button>
-    <button id="tutorialBtn" class="menu-button">
-        📖 Cara Main
-</button>
+    <button id="playBtn" class="menu-button">▶ Mulai Bermain</button>
+    <button id="continueBtn" class="menu-button"> ⏯ Lanjutkan Main</button>
+    <button id="playFriendBtn" class="menu-button play-friend-btn">👥 Bermain dengan Teman</button>
     <button id="leaderboardBtn" class="menu-button">🏆 Leaderboard</button>
+    <button id="tutorialBtn" class="menu-button">📖 Cara Main</button>
     <button id="loginBtn" class="google-login-btn">
-    <img
-        src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-        alt="Google"
-    >
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
     <span>Login with Google</span>
 </button>
     <!-- <button id="spinBtn">
         🎰 Lucky Spin
     </button> -->
 </div>
-
 <!-- <div id="spinMenu" class="spin-menu hide">
     <div class="spin-box">
         <h2>🎰 Lucky Spin</h2>
@@ -150,8 +123,7 @@
                     🔥 75
                 </div>
             </div>
-        </div>
-        
+        </div>        
         <div class="spin-buttons">
     <button id="startSpin">
         🎰 Spin 1x
@@ -167,8 +139,9 @@
             Tutup
         </button>
     </div>
-
 </div> -->
+
+<!-- DUEL WITH FRIENDS -->
 
 <!-- LEADERBOARD -->
 <div id="leaderboardMenu" class="leaderboard-menu hide">
@@ -183,27 +156,21 @@
         </div>
     </div>
 </div>
-
 <div class="app hide" id="gameApp">
-<header>
-   <div class="top-bar">
-    <button id="pauseBtn">⏸️</button>
-    <button id="missionBtn">📅</button>
-    <button id="hintBtn">💡</button>
-    <button id="settingBtn">⚙️</button>
-</div>
-<h1>BLOCK PUZZLE</h1>
 
+    <header>
+       <div class="top-bar">
+        <button id="pauseBtn">⏸️</button>
+        <button id="missionBtn">📅</button>
+        <button id="hintBtn">💡</button>
+        <button id="settingBtn">⚙️</button>
+</div>
+
+<h1>BLOCK PUZZLE</h1>
 <select id="musicBtn">
-    <option value="CrayonSinchan.mp3">
-      🎵 Crayon Sinchan
-    </option>
-    <option value="Aishiteru2.mp3">
-    🎵 DJ Aishiteru 2
-    </option>
-    <option value="AbangJahat.mp3">
-    🎵 DJ Abang Jahat
-    </option>
+    <option value="CrayonSinchan.mp3">🎵 Crayon Sinchan</option>
+    <option value="Aishiteru2.mp3">🎵 DJ Aishiteru 2</option>
+    <option value="AbangJahat.mp3">🎵 DJ Abang Jahat</option>
 </select>
 
 <div class="score">
@@ -269,15 +236,9 @@ MAIN LAGI
     <div class="pause-box">
         <h1>⏸ PAUSE</h1>
         <p>Game dihentikan sementara</p>
-        <button id="resumeBtn">
-            ▶ Lanjutkan
-        </button>
-        <button id="restartPauseBtn">
-            🔄 Main Ulang
-        </button>
-        <button id="homeBtn">
-            🏠 Menu Utama
-        </button>
+        <button id="resumeBtn">▶ Lanjutkan</button>
+        <button id="restartPauseBtn">🔄 Main Ulang</button>
+        <button id="homeBtn">🏠 Menu Utama</button>
     </div>
 </div>
 
@@ -292,36 +253,28 @@ MAIN LAGI
             <li>🎵 Pilih lagu favoritmu.</li>
             <li>🏆 Pecahkan rekor terbaik.</li>
         </ul>
-        <button id="closeHelp">
-            Tutup
-        </button>
+        <button id="closeHelp">Tutup</button>
     </div>
 </div>
 
 <div id="settings" class="settings hide">
     <div class="settings-box">
         <h2>⚙️ Pengaturan</h2>
-        <div class="setting-item">
-            <span>Musik</span>
-            <button id="toggleMusic">
-                ON
-            </button>
-        </div>
-        <div class="setting-item">
-            <span>Efek Suara</span>
-            <button id="toggleSound">
-                ON
-            </button>
-        </div>
+        <div class="setting-item music-setting">
+    <span>Musik</span>
+    <input type="range" id="musicVolume" min="0" max="100" value="30">
+    <span id="musicValue">30%</span>
+</div>
+        <div class="setting-item sound-setting">
+    <span>Suara</span>
+    <input type="range" id="soundVolume" min="0" max="100" value="80">
+    <span id="soundValue">80%</span>
+</div>
         <div class="setting-item">
             <span>Tema</span>
-            <button id="changeTheme">
-                Biru
-            </button>
+            <button id="changeTheme">Biru</button>
         </div>
-        <button id="closeSettings" class="close-btn">
-            Tutup
-        </button>
+        <button id="closeSettings" class="close-btn">Tutup</button>
     </div>
 </div>
 
