@@ -60,9 +60,7 @@ body{
         #050913 70%
     );
 }
-.loading-container{
-    text-align:center;
-}
+.loading-container{text-align:center;}
 .loading-title{
     margin:20px 0;
     color:white;
@@ -92,12 +90,8 @@ body{
     animation:
         jump 1s infinite;
 }
-.load-block:nth-child(2){
-    animation-delay:.2s;
-}
-.load-block:nth-child(3){
-    animation-delay:.4s;
-}
+.load-block:nth-child(2){animation-delay:.2s;}
+.load-block:nth-child(3){animation-delay:.4s;}
 .loading-bar{
     width:320px;
     height:18px;
@@ -205,6 +199,10 @@ body{
     color: white;
 }
 /* ======================
+  FRIENDS
+====================== */
+
+/* ======================
   LEADERBOARD
 ====================== */
 .leaderboard{
@@ -219,10 +217,7 @@ body{
     color:white;
     z-index:1000;
 }
-.leaderboard h2{
-    margin-bottom:12px;
-    text-align:center;
-}
+.leaderboard h2{margin-bottom:12px;text-align:center;}
 .lb-item{
     display:flex;
     justify-content:space-between;
@@ -254,8 +249,8 @@ body{
     position: absolute;
     top: 12px;
     right: 12px;
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     padding: 0;
     border: none;
     border-radius: 50%;
@@ -296,10 +291,7 @@ body{
     overflow:hidden;
     text-overflow:ellipsis;
 }
-.leader-level{
-    font-size:12px;
-    color:#ffd93d;
-}
+.leader-level{font-size:12px;color:#ffd93d;}
 /* Skor */
 .leader-score{
     font-size:16px;
@@ -349,10 +341,7 @@ body{
         0 20px 50px rgba(0,0,0,.45);
     animation:popup .25s ease;
 }
-.settings-box h2{
-    text-align:center;
-    margin-bottom:20px;
-}
+.settings-box h2{text-align:center;margin-bottom:20px;}
 .setting-item{
     display:flex;
     justify-content:space-between;
@@ -362,9 +351,7 @@ body{
     padding:14px;
     border-radius:14px;
 }
-.setting-item span{
-    font-size:16px;
-}
+.setting-item span{font-size:16px;}
 .setting-item button{
     width:90px;
     padding:8px;
@@ -374,11 +361,32 @@ body{
     background:#39ff88;
     cursor:pointer;
 }
-.close-btn{
-    margin-top:10px;
-    background:#ff5252;
+.music-setting{display: flex;align-items: center;gap: 12px;}
+.music-setting input{flex: 1;height: 6px;cursor: pointer;}
+#musicValue{
+    min-width: 45px;
+    text-align: right;
+    font-weight: bold;
+    color: #fff;
 }
-
+.sound-setting{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.sound-setting input{flex: 1;height: 6px;cursor: pointer;}
+#soundValue{
+    min-width: 45px;
+    text-align: right;
+    font-weight: bold;
+    color: white;
+}
+@media (max-width: 480px){
+    .music-setting{flex-wrap: wrap;gap: 8px;}
+    .music-setting input{width: 100%;}
+    #musicValue{width: 100%;text-align: left;}
+}
+.close-btn{margin-top:10px;background:#ff5252;}
 @keyframes popup{
     from{
         opacity:0;
@@ -428,14 +436,8 @@ body{
     text-align:center;
     animation:pauseOpen .25s ease;
 }
-.pause-box h1{
-    font-size:32px;
-    margin-bottom:10px;
-}
-.pause-box p{
-    opacity:.7;
-    margin-bottom:20px;
-}
+.pause-box h1{font-size:32px;margin-bottom:10px;}
+.pause-box p{opacity:.7;margin-bottom:20px;}
 .pause-box button{
     width:100%;
     margin-top:12px;
@@ -447,21 +449,11 @@ body{
     cursor:pointer;
     transition:.2s;
 }
-.pause-box button:hover{
-    transform:scale(1.03);
-}
-.pause-box button:active{
-    transform:scale(.96);
-}
-#resumeBtn{
-    background:#39ff88;
-}
-#restartPauseBtn{
-    background:#ffb347;
-}
-#homeBtn{
-    background:#5ab4ff;
-}
+.pause-box button:hover{transform:scale(1.03);}
+.pause-box button:active{transform:scale(.96);}
+#resumeBtn{background:#39ff88;}
+#restartPauseBtn{background:#ffb347;}
+#homeBtn{background:#5ab4ff;}
 @keyframes pauseOpen{
     from{
         opacity:0;
@@ -530,9 +522,7 @@ body{
     background:rgba(0,0,0,.8);
     z-index:99999;
 }
-.popup.hide{
-    display:none;
-}
+.popup.hide{display:none;}
 .popup-box{
     width:280px;
     padding:24px;
@@ -541,9 +531,7 @@ body{
     background:#182040;
     border:1px solid #5ab4ff;
 }
-.popup-box h2{
-    margin-bottom:10px;
-}
+.popup-box h2{margin-bottom:10px;}
 .popup-box input{
     width:100%;
     padding:12px;
@@ -618,7 +606,7 @@ body{
     border-radius:8px;
     background:#5ab4ff;
     color:white;
-    font-size:8px;
+    font-size:9px;
     cursor:pointer;
 }
 .profile-info h3{
@@ -627,6 +615,10 @@ body{
     font-size:16px;
     font-weight:700;
     color:#fff;
+}
+.profile-info h2{
+    font-size: 10px;
+    text-align: center;
 }
 .player-rank{
     margin-top:4px;
@@ -637,10 +629,7 @@ body{
     text-align:center;
     color:#ffd93d;
 }
-.profile-mini-stats{
-    display:flex;
-    gap:6px;
-}
+.profile-mini-stats{display:flex;gap:6px;}
 .mini-box{
     min-width:60px;
     padding:6px 8px;
@@ -660,22 +649,20 @@ body{
     font-size:15px;
 }
 .menu-button{
-    width: 260px;
+    width: 240px;
     padding: 16px;
     border: none;
     border-radius: 16px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
     background: #ffffff;
     color: #222;
     transition: .2s;
 }
-#menu button:hover{
-    transform: scale(1.05);
-}
+#menu button:hover{transform: scale(1.05);}
 .google-login-btn{
-    width: 260px;
+    width: 240px;
     padding: 16px;
     display: flex;
     align-items: center;
@@ -683,7 +670,7 @@ body{
     gap: 12px;
     border: none;
     border-radius: 16px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
     background: #ffffff;
@@ -698,16 +685,12 @@ body{
     object-fit:cover;
 }
 .google-login-btn img{
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
     flex-shrink: 0;
 }
-.google-login-btn:hover{
-    transform: translateY(-2px);
-}
-.google-login-btn:active{
-    transform: scale(.97);
-}
+.google-login-btn:hover{transform: translateY(-2px);}
+.google-login-btn:active{transform: scale(.97);}
 /* ======================
    BALOK MELAYANG
 ====================== */
@@ -720,35 +703,11 @@ body{
     animation:
         float 8s ease-in-out infinite;
 }
-.b1{
-    background:#39ff88;
-    top:12%;
-    left:10%;
-}
-.b2{
-    background:#5ab4ff;
-    top:65%;
-    left:18%;
-    animation-delay:1s;
-}
-.b3{
-    background:#ffd93d;
-    top:20%;
-    right:12%;
-    animation-delay:2s;
-}
-.b4{
-    background:#ff6b6b;
-    bottom:18%;
-    right:18%;
-    animation-delay:3s;
-}
-.b5{
-    background:#ae7cff;
-    bottom:10%;
-    left:50%;
-    animation-delay:4s;
-}
+.b1{background:#39ff88;top:12%;left:10%;}
+.b2{background:#5ab4ff;top:65%;left:18%;animation-delay:1s;}
+.b3{background:#ffd93d;top:20%;right:12%;animation-delay:2s;}
+.b4{background:#ff6b6b;bottom:18%;right:18%;animation-delay:3s;}
+.b5{background:#ae7cff;bottom:10%;left:50%;animation-delay:4s;}
 @keyframes float{
     0%{
         transform:
@@ -766,16 +725,8 @@ body{
             rotate(0deg);
     }
 }   
-.subtitle{
-    opacity:.8;
-    margin-bottom:20px;
-}
-.menu-best{
-    color: gold;
-    margin-bottom:25px;
-    font-size:20px;
-    font-weight:bold;
-}
+.subtitle{opacity:.8;margin-bottom:20px;}
+.menu-best{color: gold;margin-bottom:25px;font-size:20px;font-weight:bold;}
 .menu-btn{
     position: relative;
     z-index: 1000001;
@@ -793,10 +744,7 @@ body{
     font-weight:bold;
     cursor:pointer;
 }
-.menu-btn.secondary{
-    background:#3939ff;
-    color:white;
-}
+.menu-btn.secondary{background:#3939ff;color:white;}
 .app{
     width:100%;
     max-width:420px;
@@ -865,9 +813,7 @@ h1{
     max-width: 90vw;
     z-index: 100000000;
 }
-.combo.show {
-    animation:comboPop .9s ease,rainbow .9s linear;
-}
+.combo.show {animation:comboPop .9s ease,rainbow .9s linear;}
 @keyframes rainbow {
     0% {
         filter: hue-rotate(0deg);
@@ -916,7 +862,6 @@ h1{
 }
 .card h2{font-size:18px;color: red;}
 .card span{font-size:11px;}
-
 .stats{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -1009,12 +954,8 @@ h1{
     z-index: 999999;
     transition: .35s;
 }
-.toast.show{
-    opacity: 1;
-    transform:translateX(-50%)translateY(0);
-}
-.toast.error{background: #ff4d4d;
-}
+.toast.show{opacity: 1;transform:translateX(-50%)translateY(0);}
+.toast.error{background: #ff4d4d;}
 .toast.success {
     background: linear-gradient(
         135deg,
@@ -1120,7 +1061,7 @@ h1{
 /*======================
 SPIN
 ======================*/
-.spin-menu{
+/* .spin-menu{
     position: fixed;
     inset: 0;
     display: flex;
@@ -1287,7 +1228,7 @@ SPIN
     margin-top:-2px;
     margin-left: 10px;
     line-height:1;
-}
+} */
 /*======================
  PIECES
 ======================*/
@@ -1317,11 +1258,7 @@ SPIN
     cursor:grabbing;
     transform:scale(1.08);}
 
-.row{
-    display:flex;
-    gap:8px;
-    justify-content:center;
-}
+.row{display:flex;gap:8px;justify-content:center;}
 /*======================
  GAME OVER
 ======================*/
@@ -1344,7 +1281,6 @@ SPIN
     0 25px 60px rgba(0,0,0,.45);
 }
 .box h1{margin:18px 0;font-size:48px;}
-
 button{
     width:100%;
     padding:16px;
@@ -1369,7 +1305,6 @@ button:active{transform:scale(.96);}
     75% { transform: translateX(-4px); }
     100% { transform: translateX(0); }
 }
-
 /* ======================
    ANIMASI BALOK MELEDAK
 ====================== */
@@ -1546,9 +1481,7 @@ button:active{transform:scale(.96);}
             scale(1);
     }
 }
-.piece.spawn {
-    animation: dropPiece .35s ease-out;
-}
+.piece.spawn {animation: dropPiece .35s ease-out;}
 /*======================
  PARTICLE
 ======================*/
@@ -1598,9 +1531,26 @@ button:active{transform:scale(.96);}
 }
 /* Android + iPhone */
 @media (min-width: 361px) and (max-width: 600px) {
+    .profile-info h3{font-size:11px;}
+    .profile-info h2{font-size:9px;}
+    #changeNameBtn{font-size:8px;} 
+    .mini-box{min-width:50px;padding:0px 2px;}
+    .mini-box span{font-size:13px;}
+    .mini-box b{font-size:15px;}
+    .menu-button{width: 180px;padding: 12px;font-size: 12px;}
+    .google-login-btn{width: 180px;padding: 12px;font-size: 12px}
+    .google-login-btn img{width: 17px;height: 17px;}
+    .logo{font-size: 32px;}
     .board {--size: 38px;}
     .block {width: 26px;height: 26px;}
-}
+/* H2 LB */
+    .lb{font-size: 20px;}
+/* Avatar */
+    .leader-avatar{width:39px;height:39px;}
+    .leader-name{font-size:10px;}
+    .leader-level{font-size:11px;color:#ffd93d;}
+/* Skor */
+    .leader-score{font-size:13px;}}
 /* Tablet */
 @media (min-width: 601px) and (max-width: 900px) {
     .board {--size: 42px;}
