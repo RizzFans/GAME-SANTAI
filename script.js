@@ -978,15 +978,26 @@ showScore("+" + addScore,window.innerWidth / 2,window.innerHeight / 2);
 S.textContent=GAME.score;
 GAME.coin += addScore / 10;
 localStorage.setItem("block_coin", GAME.coin);
-if (GAME.score >= GAME.level * 1000) {
-    GAME.level++;
-    localStorage.setItem(
-    "block_level",
-    GAME.level
-);
-    showCombo("LEVEL UP!");
-    playSound(1500,0.4);
+function getLevelTarget(level) {
+    if (level <= 5) {return level * 1000;}
+    if (level <= 10) {return 5000 + (level - 5) * 2000;}
+    if (level <= 20) {return 15000 + (level - 10) * 3500;}
+    return 50000 + (level - 20) * 5000;
 }
+while (GAME.score >= getLevelTarget(GAME.level)) {
+    GAME.level++;
+    localStorage.setItem("block_level",GAME.level);
+    document.body.classList.add("level-up");
+    setTimeout(() => {document.body.classList.remove("level-up");}, 800);
+    const rewards = GAME.level * 25;
+    GAME.coin += rewards;
+    showCombo(`⬆ LEVEL ${GAME.level}\n💰 +${rewards} COIN`);
+    playSound(600,0.5,1800,"triangle");
+setTimeout(() => {playSound(1800,0.25,2500,"triangle");}, 150);
+    burst(window.innerWidth / 2,window.innerHeight / 2,"#ffd700");
+}
+C.textContent = GAME.coin;
+L.textContent = GAME.level;
 C.textContent = GAME.coin;
 L.textContent = GAME.level;
 if(GAME.score>GAME.best)
@@ -1015,21 +1026,23 @@ GAME.hand.length===0
 makePieces();
 }
 saveGame();
+await new Promise(r => setTimeout(r, 50));
 gameOver();
 }
-addEventListener("pointerup",e=>{
-if (paused) return;
-if(!PICK)return;
-let pos=boardPos(e.clientX,e.clientY);
-if(canPlace(PICK,pos.x,pos.y)){placePiece(PICK,pos.x,pos.y);playSound(420,0.12);
-}else{
-resetPiece(PICK);
-}
-if (HOLDER) {HOLDER.remove();HOLDER = null;}
-clearPreview();
-PICK=null;
-}
-);
+addEventListener("pointerup", async e => {
+    if (paused) return;
+    if (!PICK) return;
+    const pos = boardPos(e.clientX, e.clientY);
+    if (canPlace(PICK, pos.x, pos.y)) {const currentPiece = PICK;PICK = null;
+        playSound(350,0.08,600,"triangle");
+        await placePiece(currentPiece, pos.x, pos.y);
+    } else {
+        resetPiece(PICK);
+        PICK = null;
+    }
+    if (HOLDER) {HOLDER.remove();HOLDER = null;}
+    clearPreview();
+});;
 console.log("ENGINE PART 3 OK");
 /*==========================
  BLOCK BLAST ENGINE
@@ -1085,18 +1098,15 @@ rows.forEach(y => {for (let x = 0; x < G; x++) {cellsToRemove.push({x,y});}});
 // Ambil semua balok kolom
 cols.forEach(x => {for (let y = 0; y < G; y++) {cellsToRemove.push({x,y});}});
 // Hapus duplikat
-const unique = [];
-cellsToRemove.forEach(c => {if (!unique.some(v => v.x === c.x &&v.y === c.y)) {unique.push(c);}});
+const seen = new Set();
+const unique = cellsToRemove.filter(c => {const key = `${c.x},${c.y}`;if (seen.has(key)) {return false;}seen.add(key);return true;});
 // Animasi hilang satu per satu
 unique.forEach((pos, index) => {
-    const cell =GAME.cells[pos.y * G + pos.x];
-    setTimeout(() => {
-    const cell = GAME.cells[ pos.y * G + pos.x];
-    cell.classList.add("explode");
-    setTimeout(() => {GAME.grid[pos.y][pos.x] = 0;
-        drawBoard();
-        cell.classList.remove("explode");}, 300);
-}, index * 50);
+    const cell = GAME.cells[pos.y * G + pos.x];
+    setTimeout(() => {cell.classList.add("explode");
+        const rect = cell.getBoundingClientRect();
+        burst(rect.left + rect.width / 2,rect.top + rect.height / 2,GAME.grid[pos.y][pos.x]?.color || "#00ffff");
+        setTimeout(() => {GAME.grid[pos.y][pos.x] = 0;cell.classList.remove("explode");}, 300);}, index * 25);
 });
 await new Promise(r => setTimeout(r,unique.length * 50 + 350));
     const lines =rows.length + cols.length;
@@ -1106,16 +1116,15 @@ if (now - comboTimeout < 10000) {comboStreak++;
 comboTimeout = now;
 let bonus = 0;
 if (comboStreak === 1) {bonus = 100;
-    showCombo("MANTAB!");
-    playSound(700, 0.18);
+    showCombo("MANTAB!");playSound(500,0.15,900,"square");
 }
 else if (comboStreak === 2) {bonus = 300;
     showCombo("⚡ COMBO x2");
-    playSound(900, 0.22);
+    playSound(700,0.18,1400,"sawtooth");
 }
 else if (comboStreak === 3) {bonus = 700;
     showCombo("BUSET!");
-    playSound(1100, 0.28);
+    playSound(1000,0.35,2200,"sawtooth");
 }
 else if (comboStreak === 4) {bonus = 1500;
     showCombo("GILE LU NDRO!");
@@ -1204,19 +1213,20 @@ function showScore(text, x, y){
     document.body.appendChild(el);
     setTimeout(() => {el.remove();}, 800);
 }
-function burst(x, y, color){
-    for(let i = 0; i < 12; i++){
-        const p =document.createElement("div");
-        p.className ="particle";
-        p.style.background =color;
-        p.style.left =x + "px";
-        p.style.top =y + "px";
-        const angle =Math.random() * Math.PI * 2;
-        const dist =40 + Math.random() * 60;
-        p.style.setProperty("--tx",Math.cos(angle) * dist + "px");
-        p.style.setProperty("--ty",Math.sin(angle) * dist + "px");
+function burst(x, y, color = "#00ffff") {
+    for (let i = 0; i < 8; i++) {
+        const p = document.createElement("div");
+        p.className = "particle";
+        p.style.left = x + "px";
+        p.style.top = y + "px";
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 40 + Math.random() * 60;
+        p.style.setProperty("--dx",Math.cos(angle) * speed + "px");
+        p.style.setProperty("--dy",Math.sin(angle) * speed + "px");
+        p.style.background = color;
         document.body.appendChild(p);
-        setTimeout(() => {p.remove();}, 600);}
+        setTimeout(() => p.remove(), 400);
+    }
 }
 /*==========================
 MENU
@@ -1267,18 +1277,37 @@ closeHelp.onclick = () => {helpMenu.classList.add("hide");};
 ==========================*/
 const audioCtx = new (window.AudioContext ||window.webkitAudioContext)();
 let soundVolume =localStorage.getItem("sound_volume") || 80;
-function playSound(freq,duration){if (soundVolume <= 0)
-        return;
-    const osc =audioCtx.createOscillator();
-    const gain =audioCtx.createGain();
+function playSound(startFreq, duration, endFreq = null, type = "triangle") {
+    const ctx = window.audioCtx ||
+        (window.audioCtx = new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )());
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(
+        startFreq,
+        ctx.currentTime
+    );
+    if (endFreq !== null) {
+        osc.frequency.exponentialRampToValueAtTime(
+            endFreq,
+            ctx.currentTime + duration
+        );
+    }
+    gain.gain.setValueAtTime(
+        0.08,
+        ctx.currentTime
+    );
+    gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        ctx.currentTime + duration
+    );
     osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.type = "square";
-    osc.frequency.value =freq;
-    gain.gain.value =soundVolume / 100 * 0.08;
+    gain.connect(ctx.destination);
     osc.start();
-    gain.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime +duration);
-    osc.stop(audioCtx.currentTime +duration);
+    osc.stop(ctx.currentTime + duration);
 }
 /*==========================
 BACKGROUND MUSIC
