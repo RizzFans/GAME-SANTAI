@@ -868,6 +868,35 @@ h1{
     gap:8px;
     margin-bottom:10px;
 }
+.level-up {
+    animation: levelFlash 1s ease;
+}
+@keyframes levelFlash {
+    0% {
+        filter:
+            brightness(1)
+            saturate(1);
+        transform: scale(1);
+    }
+    30% {
+        filter:
+            brightness(1.7)
+            saturate(2);
+        transform: scale(1.03);
+    }
+    60% {
+        filter:
+            brightness(1.3)
+            saturate(1.5);
+        transform: scale(1.015);
+    }
+    100% {
+        filter:
+            brightness(1)
+            saturate(1);
+        transform: scale(1);
+    }
+}
 /*======================
  BOARD
 ======================*/
@@ -1485,31 +1514,25 @@ button:active{transform:scale(.96);}
 /*======================
  PARTICLE
 ======================*/
-.particle{
-    position:fixed;
-    width:14px;
-    height:14px;
-    border-radius:4px;
-    pointer-events:none;
-    z-index:99999;
-    animation:
-        particle .6s ease-out forwards;
+.particle {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    box-shadow: 0 0 8px currentColor;
+    animation: particleBlast .4s linear forwards;
 }
-@keyframes particle{
-    from{
-        opacity:1;
-        transform:
-            translate(0,0)
-            scale(1);
+@keyframes particleBlast {
+    from {
+        transform: translate(0, 0);
+        opacity: 1;
     }
-    to{
-        opacity:0;
+    to {
         transform:
-            translate(
-                var(--tx),
-                var(--ty)
-            )
-            scale(0);
+            translate(var(--dx), var(--dy));
+        opacity: 0;
     }
 }
 #musicBtn{
@@ -1533,7 +1556,16 @@ button:active{transform:scale(.96);}
 @media (min-width: 361px) and (max-width: 600px) {
     .profile-info h3{font-size:11px;}
     .profile-info h2{font-size:9px;}
-    #changeNameBtn{font-size:8px;} 
+    #changeNameBtn{font-size:8px;}
+    .player-rank{
+    margin-top:4px;
+    padding:2px 8px;
+    font-size:9px;
+    border-radius:999px;
+    background:#ffffff15;
+    text-align:center;
+    color:#ffd93d;
+} 
     .mini-box{min-width:50px;padding:0px 2px;}
     .mini-box span{font-size:13px;}
     .mini-box b{font-size:15px;}
